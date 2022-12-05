@@ -9,20 +9,20 @@
 #include <string>
 #include "Tree.h"
 #include "Player.h"
-/*
+
 const int INITIAL_SIZE_OF_TEAM = 0;
 class Team
 {
     private:
-    int TeamId;
-    int Points;
-    int Size;
-    Tree<int,Shared_ptr<Player>> Players;
-    int GoalsSum;
-    int CardsSum;
-    int TeamGamesPlayed;
-    int TopScorer;
-    bool HasGoalKeeper;
+    int teamId;
+    int points;
+    Tree<int,Player> players;
+    Tree<Player,Player> fightingPlayers;
+    int goalSum;
+    int cardSum;
+    int teamGamesPlayed;=0
+    int topScorer;=update in every insert
+    bool hasGoalKeeper;=upate in every insert
 
     public:
     Team() = delete;
@@ -32,12 +32,15 @@ class Team
     ~Team() = default;
     Team(const Team& t) = delete;
     Team& operator=(const Team& t) = delete;
+    insertPlayer
+    removePlayer
+
     class InvalidArgument: public std::exception
     {
         public:
         const std::string what() const override {return "An invalid argument has passed";}
     };
-
+/*
     //const getters
     int getTeamId() const {return this->TeamId;}
     int getPoints() const {return this->Points;}
