@@ -17,11 +17,11 @@ class Node
     Node<Key,Value>* right, *left;
     Node<Key,Value>* parent, *next, *prev;
     Key key;
-    Value value;
+    Value* value;
     int height;
 
     Node() = delete;
-    Node(const Key& key, const Value& value):
+    Node(const Key& key, Value* value):
          right(nullptr), left(nullptr), prev(nullptr), next(nullptr), parent(nullptr),
          key(key), value(value), height(INITIAL_HIGHT){}
     ~Node() = default;
