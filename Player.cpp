@@ -2,7 +2,81 @@
 // Created by liels on 28/11/2022.
 //
 
-#include "Player.h"/*
+#include "Player.h"
+
+Player::Player(int playerId, int teamId, int gamesPlayed, int goals, int cardsReceived, bool canBeGoalkeeper, Team* team):
+playerId(playerId), teamId(teamId), gamesPlayed(gamesPlayed), goals(goals),
+cardsReceived(cardsReceived), canBeGoalkeeper(canBeGoalkeeper), team(team)
+{
+    if(playerId<=0 || teamId<=0 || gamesPlayed<0 || goals<0 || cardsReceived<0 ||
+    (gamesPlayed == 0 && (cardsReceived>0 || goals>0)) || team == nullptr)
+    {
+        throw std::invalid_argument("Invalid input- cant build such player");
+    }
+}
+
+void Player::updatePlayer(int gamesPlayed, int goals, int cardsReceived)
+{
+    if(gamesPlayed<0 || goals<0 || cardsReceived<0)
+    {
+        throw std::invalid_argument("Invalid input");
+    }
+    this->gamesPlayed+= gamesPlayed;
+    this->goals+= goals;
+    this->cardsReceived+= cardsReceived;
+}
+bool Player::operator<(const Player& player) const
+{
+    if(this->playerId == player.playerId)
+    {
+        throw std::invalid_argument("invalid argument- cant compare player to himself");
+    }
+    if(this->goals < player.goals)
+    {
+        return true;
+    }
+    else if(this->goals > player.goals)
+    {
+        return false;
+    }
+    else
+    {
+        if(this->cardsReceived < player.cardsReceived)
+        {
+            return true;
+        }
+        else if(this->cardsReceived > player.cardsReceived)
+        {
+            return false;
+        }
+        else
+        {
+            if(this->playerId < player.playerId)
+            {
+                return true;
+            }
+            else if(this->playerId > player.playerId)
+            {
+                return true;
+            }
+        }
+    }
+    throw std::logic_error("logic error- something went wrong with players comparison");
+}
+
+bool operator>(const Player& player1, const Player& player2)
+{
+    return (!(player1 < player2) && !(player1==player2));
+}
+
+bool Player::operator==(const Player& player) const
+{
+    return this->playerId == player.playerId;
+}
+
+
+
+/*
 void Player::setTeamId(int TeamId)
 {
     if(TeamId < 0)

@@ -9,36 +9,32 @@
 #include <string>
 #include "Node.h"
 #include <iostream>
-using namespace std;
+#include <stdexcept>
+
 const int INITIAL_SIZE_OF_TREE = 0;
 
 template<class Key, class Value>
 class Tree
 {
     private:
-    Node<Key,Value>* Root;
-    int Size;
+    Node<Key,Value>* root;
+    int size;
 
     public:
     Tree():
-    Root(NULL), Size(INITIAL_SIZE_OF_TREE){}
-//    Tree(const Node<Key,Value>& Root, int Size) = default;
+    root(NULL), size(INITIAL_SIZE_OF_TREE){}
+    Tree(const Node<Key,Value>& Root, int size) = default;
     ~Tree() = default;
     Tree& operator=(const Tree& t) = delete;
-    class InvalidArgument: public std::exception
-    {
-        public:
-        const char *what() const noexcept override {return "An invalid argument has passed";}
-    };
     class NodeAlreadyExist : public std::exception
     {
-    public:
-        const char *what() const noexcept override {return "Node already exist in this tree";}
+        public:
+        const char* what() const noexcept override {return "Node already exist in this tree";}
     };
     class NodeDoesNotExist : public std::exception
     {
-    public:
-        const char *what() const noexcept override {return "Node does not exist in this tree";}
+        public:
+        const char* what() const noexcept override {return "Node does not exist in this tree";}
     };
 
     //built-in functions
@@ -52,31 +48,20 @@ class Tree
     //Value** toArray(Key begin, Key end);
     //Key getClosest(Key key);
     int getBalanceFactor(const Node<Key, Value>* node);
-    Node<Key, Value> *getRotated(Node<Key, Value> *currentNode, int rightChildBalanceFactor, int leftChildBalanceFactor,
-               int balanceFactor);
-    //////////////////////////
+    Value* findTheRightmostNode() const;
+    Node<Key, Value> *getRotated(Node<Key, Value> *currentNode, int rightChildBalanceFactor,
+                                 int leftChildBalanceFactor, int balanceFactor);
     void print()
     {
-        printNode(Root);
-        //cout << *Root->value;
+        printNode(root);//oriiiii need it?
     }
 
-    void printNode(Node<Key,Value>* node)
+    void printNode(Node<Key,Value>* node)//also... if yes move outside class
     {
         if(node == nullptr) return;
         printNode(node->left);
         cout << *node->value<<", ";
         printNode(node->right);
-    }
-
-    void updateHeight(Node<Key,Value>* node)
-    {
-        if(node != nullptr)
-        {
-            int leftHeight = (node->left) ? node->left->height : -1;
-            int rightHeight = (node->right) ? node->right->height : -1;
-            node->height = (leftHeight >= rightHeight) ? (leftHeight + 1) : (rightHeight + 1);
-        }
     }
 
 };
@@ -86,10 +71,10 @@ void Tree<Key,Value>::createAndInsertNode(const Key& key, Value* value)
 {
     if(value == nullptr)
     {
-        throw InvalidArgument();
+        throw std::invalid_argument("invalid argument- cant insert an empty node");
     }
         Node<Key,Value>* nodeForInsertion = new Node<Key,Value>(key,value);
-        Root = insertNode(Root, nodeForInsertion);
+        root = insertNode(root, nodeForInsertion);
         if(nodeForInsertion->next) nodeForInsertion->next->prev = nodeForInsertion;
         if(nodeForInsertion->prev) nodeForInsertion->prev->next = nodeForInsertion;
 
@@ -107,48 +92,46 @@ int Tree<Key,Value>::getBalanceFactor(const Node<Key, Value>* node)
 template<class Key, class Value>
 Node<Key,Value>* Tree<Key,Value>::insertNode(Node<Key,Value>* currentNode, Node<Key,Value>* nodeForInsertion)
 {
-        if(currentNode == nullptr)
+    if(currentNode == nullptr)
+    {
+        return nodeForInsertion;
+    }
+    if(nodeForInsertion->key == currentNode->key)
+    {
+        throw NodeAlreadyExist();
+    }
+    else if(nodeForInsertion->key < currentNode->key)
+    {
+        if(!nodeForInsertion->next || nodeForInsertion->next->key > currentNode->key)
         {
-            return nodeForInsertion;
+            nodeForInsertion->next = currentNode;
         }
-        if(nodeForInsertion->key == currentNode->key)
+        currentNode->left = insertNode(currentNode->left, nodeForInsertion);
+        currentNode->left->parent = currentNode;
+    }
+    else
+    {
+        if(!nodeForInsertion->prev || nodeForInsertion->prev->key < currentNode->key)
         {
-            throw NodeAlreadyExist();
+            nodeForInsertion->prev = currentNode;
         }
-        else if(nodeForInsertion->key < currentNode->key)
-        {
-            if(!nodeForInsertion->next || nodeForInsertion->next->key > currentNode->key)
-            {
-                nodeForInsertion->next = currentNode;
-            }
-            currentNode->left = insertNode(currentNode->left, nodeForInsertion);
-            currentNode->left->parent = currentNode;
-        }
-        else
-        {
-            if(!nodeForInsertion->prev || nodeForInsertion->prev->key < currentNode->key)
-            {
-                nodeForInsertion->prev = currentNode;
-            }
-            currentNode->right = insertNode(currentNode->right, nodeForInsertion);
-            currentNode->right->parent = currentNode;
-        }
-        updateHeight(currentNode);
-
-        int rightChildBalanceFactor = getBalanceFactor(currentNode->right);
-        int leftChildBalanceFactor = getBalanceFactor(currentNode->left);
-        int balanceFactor = getBalanceFactor(currentNode);
+        currentNode->right = insertNode(currentNode->right, nodeForInsertion);
+        currentNode->right->parent = currentNode;
+    }
+    updateHeight(currentNode);
+    int rightChildBalanceFactor = getBalanceFactor(currentNode->right);
+    int leftChildBalanceFactor = getBalanceFactor(currentNode->left);
+    int balanceFactor = getBalanceFactor(currentNode);
     return getRotated(currentNode, rightChildBalanceFactor, leftChildBalanceFactor, balanceFactor);
-
 }
 
 template<class Key, class Value>
 Node<Key, Value> *
 Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, int rightChildBalanceFactor, int leftChildBalanceFactor,
-                             int balanceFactor) {
+                             int balanceFactor)
+ {
     if(balanceFactor == 2 && leftChildBalanceFactor >= 0)
     {
-        //cout << "LL!";
         Node<Key,Value>* A = currentNode;
         Node<Key,Value>* Al = currentNode->left;
         Node<Key,Value>* Alr = currentNode->left->right; //can be null
@@ -173,7 +156,6 @@ Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, int rightChildBalanc
     }
     else if(balanceFactor==2 && leftChildBalanceFactor==-1)
     {
-        //cout << "LR!";
         Node<Key,Value>* A = currentNode;
         Node<Key,Value>* Al = currentNode->left;
         Node<Key,Value>* Alr = currentNode->left->right;
@@ -205,8 +187,6 @@ Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, int rightChildBalanc
     }
     else if(balanceFactor==-2 && rightChildBalanceFactor<=0)
     {
-        ///RR
-        //cout << "RR!";
         Node<Key,Value>* A = currentNode;
         Node<Key,Value>* Ar = currentNode->right;
         Node<Key,Value>* Arl = currentNode->right->left; //can be null
@@ -224,17 +204,13 @@ Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, int rightChildBalanc
                 Ar->parent->left = Ar;
             }
         }
-
         updateHeight(A);
         updateHeight(Ar);
         updateHeight(Arl);
         return Ar;
-
     }
     else if(balanceFactor==-2 && rightChildBalanceFactor==1)
     {
-        ///RL
-        //cout << "RL!";
         Node<Key,Value>* A = currentNode;
         Node<Key,Value>* Ar = currentNode->right;
         Node<Key,Value>* Arl = currentNode->right->left;
@@ -248,11 +224,13 @@ Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, int rightChildBalanc
         Ar->left = Arlr;
         Arl->right = Ar;
         Arl->left = A;
-        if(Arl->parent) { //(now Arl is the root)
+        if(Arl->parent)
+        { //(now Arl is the root)
             if(Arl->parent->right == A)
             {
                 Arl->parent->right = Arl;
-            } else
+            }
+            else
             {
                 Arl->parent->left = Arl;
             }
@@ -264,7 +242,6 @@ Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, int rightChildBalanc
         updateHeight(Arlr);
         return Arl;
     }
-
     return currentNode;
 }
 
@@ -272,56 +249,45 @@ Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, int rightChildBalanc
 template<class Key, class Value>
 Value* Tree<Key,Value>::remove(const Key& key)
 {
-        Node<Key,Value>* removedNode = removeNode(Root, key);
-        Value* val = removedNode->value;
-        delete removedNode;
-        return val;
+    Node<Key,Value>* removedNode = removeNode(Root, key);
+    Value* val = removedNode->value;
+    delete removedNode;
+    return val;
 }
 
 template<class Key, class Value>
 Node<Key,Value>* Tree<Key,Value>::removeNode(Node<Key, Value> *currentNode, const Key &key)
 {
-    //cout<< "current: " << *currentNode->value<<"\n";
     if(currentNode == nullptr)
     {
         throw NodeDoesNotExist();
     }
-
     Node<Key, Value>* removedNode = currentNode;
     if(key == currentNode->key)
     {
         if(currentNode->left && !currentNode->right)
         {
-            //cout<<"first";
             connectSonParent(currentNode,currentNode->left);
             currentNode = currentNode->parent; //now the root of current tree is the parent
         }
 
         else if(currentNode->right && !currentNode->left)
         {
-            //cout<<"second";
             connectSonParent(currentNode,currentNode->right);
             currentNode = currentNode->parent;
         }
         else if(currentNode->right && currentNode->left)
         {
-            //swap
-            //cout<<"third";
             Key currentKey = currentNode->key;
             Value* currentValue = currentNode->value;
             currentNode->key = currentNode->next->key;
             currentNode->value = currentNode->next->value;
             currentNode->next->key = currentKey;
             currentNode->next->value = currentValue;
-           // cout << "current node:" <<*currentNode->value;
-           // this->print();
             removedNode = removeNode(currentNode->next,key);
-           // currentNode = currentNode->prev;
-          //  cout << "current node:" <<*currentNode->value;
         }
         else
         {
-            //cout << "fouth!";
             if(currentNode->parent)
             {
                 if(currentNode->parent->left == currentNode) currentNode->parent->left = nullptr;
@@ -372,6 +338,21 @@ void Tree<Key,Value>::connectSonParent(Node<Key, Value> *currentNode,Node<Key, V
     updateHeight(son->parent);
 }
 
+template<class Key, class Value>
+void updateHeight(Node<Key,Value>* node)
+{
+    if(node != nullptr)
+    {
+        int leftHeight = (node->left) ? node->left->height : -1;
+        int rightHeight = (node->right) ? node->right->height : -1;
+        node->height = (leftHeight >= rightHeight) ? (leftHeight + 1) : (rightHeight + 1);
+    }
+}
+template<class Key, class Value>
+Node<Key, Value> findTheRightmostNode()
+{
+
+}
 
 #endif //HW1_TREE_H
 

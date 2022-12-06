@@ -2,44 +2,36 @@
 // Created by liels on 28/11/2022.
 ///
 
-#ifndef HW1_TEAM_H
-#define HW1_TEAM_H
+#ifndef wet_1_TEAM_H
+#define wet_1_TEAM_H
 
-#include <stdlib.h>
-#include <string>
+#include <cstdlib>
 #include "Tree.h"
 #include "Player.h"
 
-const int INITIAL_SIZE_OF_TEAM = 0;
 class Team
 {
     private:
     int teamId;
     int points;
-    Tree<int,Player> players;
-    Tree<Player,Player> fightingPlayers;
     int goalSum;
     int cardSum;
-    int teamGamesPlayed;=0
-    int topScorer;=update in every insert
-    bool hasGoalKeeper;=upate in every insert
+    int teamGamesPlayed;
+    int goalKeepers;
+    Player* topScorerPlayer;
+    Tree<int,Player> players;
+    Tree<Player,Player> playersByStatistics;
 
     public:
     Team() = delete;
-    Team(int TeamId, int Points, int GoalsSum, int CardsSum,int TeamGamesPlayed, int TopScorer, bool HasGoalKeeper):
-    TeamId(TeamId), Points(Points), Size(INITIAL_SIZE_OF_TEAM), GoalsSum(GoalsSum), CardsSum(CardsSum),
-    TeamGamesPlayed(TeamGamesPlayed), TopScorer(TopScorer), HasGoalKeeper(HasGoalKeeper) {}
+    Team(int teamId, int points, int goalsSum = 0, int cardsSum = 0, int teamGamesPlayed = 0,
+         int goalKeepers = 0, const Player* topScorerPlayer= nullptr);
     ~Team() = default;
     Team(const Team& t) = delete;
     Team& operator=(const Team& t) = delete;
-    insertPlayer
-    removePlayer
+    void insertPlayer(Player& player);
+    void removePlayer(const Player& player);
 
-    class InvalidArgument: public std::exception
-    {
-        public:
-        const std::string what() const override {return "An invalid argument has passed";}
-    };
 /*
     //const getters
     int getTeamId() const {return this->TeamId;}
@@ -70,8 +62,8 @@ class Team
     void setGoalsSum(int GoalsSum);
     void setCardsSum(int CardsSum);
     void setTeamGamesPlayed(int TeamGamesPlayed);
-    void setHasGoalKeeper(bool HasGoalKeeper); //not sure
+    void setHasGoalKeeper(bool HasGoalKeeper); //not sure */
 };
 
-*/
-#endif //HW1_TEAM_H
+
+#endif //wet_1_TEAM_H

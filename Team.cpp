@@ -3,52 +3,40 @@
 //
 
 #include "Team.h"
-/*
-void Team::setPoints(int points)
+
+Team::Team(int teamId, int points, int goalsSum, int cardsSum, int teamGamesPlayed,
+           int goalKeepers, const Player* topScorerPlayer):
+           teamId(teamId), points(points), players(), playersByStatistics() {}
+
+void Team::insertPlayer(Player& player)
 {
-    if(points < 0)
+
+    players.createAndInsertNode(player.getPlayerId(), &player);
+    playersByStatistics.createAndInsertNode(player, &player);
+    goalSum+=player.getPlayerGoals();
+    cardSum+=player.getPlayerCardsReceived();
+    if(player.getPlayerGoals() > topScorerPlayer->getPlayerGoals())
     {
-        throw InvalidArgument();
+        topScorerPlayer = &player;
+        topScorerPlayer->getPlayerId() = player.getPlayerId();
     }
-    this->Points = points;
-}
-int Team::setSize(int size)
-{
-    if(size < 0)
+    if(player.getPlayerCanBeGooalkeeper())
     {
-        throw InvalidArgument();
+        goalKeepers++;
     }
-    this->Size = size;
 }
-void Team::setPlayers(const Tree<int,Shared_ptr<Player>>& players)
+
+void Team::removePlayer(const Player& player)
 {
-    this->Players = players;
-}
-void Team::setGoalsSum(int GoalsSum)
-{
-    if(GoalsSum < 0)
+    players.remove(player.getPlayerId());
+    playersByStatistics.remove(player);
+    goalSum-=player.getPlayerGoals();
+    cardSum-=player.getPlayerCardsReceived();
+    topScorerPlayer = playersByStatistics.findTheRightmostNode();
+    if(player.getPlayerCanBeGooalkeeper())
     {
-        throw InvalidArgument();
+        goalKeepers--;
     }
-    this->GoalsSum = GoalsSum;
 }
-void Team::setCardsSum(int CardsSum)
-{
-    if(CardsSum < 0)
-    {
-        throw InvalidArgument();
-    }
-    this->CardsSum = CardsSum;
-}
-void Team::setTeamGamesPlayed(int TeamGamesPlayed)
-{
-    if(TeamGamesPlayed < 0)
-    {
-        throw InvalidArgument();
-    }
-    this->TeamGamesPlayed = TeamGamesPlayed;
-}
-void Team::setHasGoalKeeper(bool HasGoalKeeper)
-{
-    this->HasGoalKeeper = HasGoalKeeper;
-}*/
+
+
