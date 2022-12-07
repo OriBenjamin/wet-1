@@ -16,6 +16,8 @@ class Player
     int playerId;
     int gamesPlayed;
     int goals;
+
+private:
     int cardsReceived;
     bool canBeGoalkeeper;
     Team* team;
@@ -45,7 +47,9 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const Player &player);
 
-
+    void setGamesPlayed(int gamesPlayed);
+    void setGoals(int goals);
+    void setCardsReceived(int cardsReceived);
 };
 
 bool operator>(const Player& player1, const Player& player2);

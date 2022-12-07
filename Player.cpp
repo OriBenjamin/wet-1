@@ -85,6 +85,18 @@ Team *Player::getTeam() const {
     return team;
 }
 
+void Player::setGamesPlayed(int gamesPlayed) {
+    Player::gamesPlayed = gamesPlayed;
+}
+
+void Player::setGoals(int goals) {
+    Player::goals = goals;
+}
+
+void Player::setCardsReceived(int cardsReceived) {
+    Player::cardsReceived = cardsReceived;
+}
+
 
 
 /*
