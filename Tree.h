@@ -15,12 +15,12 @@ const int INITIAL_SIZE_OF_TREE = 0;
 
 class NodeAlreadyExist : public std::exception
 {
-public:
+    public:
     const char* what() const noexcept override {return "Node already exist in this tree";}
 };
 class NodeDoesNotExist : public std::exception
 {
-public:
+    public:
     const char* what() const noexcept override {return "Node does not exist in this tree";}
 };
 
@@ -30,12 +30,11 @@ class Tree
     private:
     Node<Key,Value>* root;
     int size;
-public:
+    public:
     int getSize() const {
         return size;
     }
 
-public:
     Tree():
             root(NULL), size(INITIAL_SIZE_OF_TREE){}
 //    Tree(const Node<Key,Value>& root, int size) = default;
@@ -51,11 +50,15 @@ public:
     Node<Key,Value>* findNode(Node<Key,Value>* currentNode, const Key key);
     Value* getLast();
     void connectSonParent(Node<Key, Value> *currentNode,Node<Key, Value> *son);
-    //friend void mergeTrees(Tree<Key,Value> t1, Tree<Key,Value> t2);
+    friend Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2);
     //Value** toArray(Key begin, Key end);
     //Key getClosest(Key key);
-
+    Value& inorder(const Node<Key,Value>& currentNode, Value* valuesArray);
     int getBalanceFactor(const Node<Key, Value>* node);
+
+
+
+
     Node<Key, Value> *getRotated(Node<Key, Value> *currentNode, int rightChildBalanceFactor,
                                  int leftChildBalanceFactor, int balanceFactor);
     void print() const
@@ -82,6 +85,7 @@ public:
         }
     }
 
+    //what is that
     friend std::ostream &operator<<(std::ostream &os, const Tree &tree) {
         tree.print();
         return os;
@@ -96,13 +100,16 @@ void Tree<Key,Value>::insert(const Key key, Value* value)
     {
         throw std::invalid_argument("invalid argument- cant insert an empty node");
     }
-
-        Node<Key, Value> *nodeForInsertion = new Node<Key, Value>(key, value);
-
+    Node<Key, Value> *nodeForInsertion = new Node<Key, Value>(key, value);
     root = insertNode(root, nodeForInsertion);
-        if(nodeForInsertion->next) nodeForInsertion->next->prev = nodeForInsertion;
-        if(nodeForInsertion->prev) nodeForInsertion->prev->next = nodeForInsertion;
-
+    if(nodeForInsertion->next)
+    {
+        nodeForInsertion->next->prev = nodeForInsertion;
+    }
+    if(nodeForInsertion->prev)
+    {
+        nodeForInsertion->prev->next = nodeForInsertion;
+    }
     this->size++;
 }
 
@@ -413,6 +420,20 @@ Value* Tree<Key,Value>::getLast()
     }
     return currentNode->value;
 }
+
+template<class Key, class Value>
+Vakue* convertToArray(const Node<Key,Value>& currentNode, Value* valuesArray)
+{
+    inorderHelper()
+}
+
+
+template<class Key, class Value>
+Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2)
+{
+
+}
+
 
 #endif //HW1_TREE_H
 
