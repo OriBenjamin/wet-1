@@ -12,6 +12,7 @@
 #include <stdexcept>
 
 const int INITIAL_SIZE_OF_TREE = 0;
+const int INITIAL_INDEX_OF_ARRAY = 0;
 
 class NodeAlreadyExist : public std::exception
 {
@@ -50,12 +51,12 @@ class Tree
     Node<Key,Value>* findNode(Node<Key,Value>* currentNode, const Key key);
     Value* getLast();
     void connectSonParent(Node<Key, Value> *currentNode,Node<Key, Value> *son);
-    friend Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2);
+    //friend Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2);
     //Value** toArray(Key begin, Key end);
     //Key getClosest(Key key);
-    Value& inorder(const Node<Key,Value>& currentNode, Value* valuesArray);
+    void convertToArray(const Node<Key,Value>* currentNode, Value* valuesArray, int currentNodeIndex = INITIAL_INDEX_OF_ARRAY);
     int getBalanceFactor(const Node<Key, Value>* node);
-
+    Node<Key, Value>* getRoot() const {return root;}
 
 
 
@@ -421,12 +422,18 @@ Value* Tree<Key,Value>::getLast()
     return currentNode->value;
 }
 
-template<class Key, class Value>
-Vakue* convertToArray(const Node<Key,Value>& currentNode, Value* valuesArray)
-{
-    inorderHelper()
-}
 
+template<class Key, class Value>
+void convertToArray(const Node<Key,Value>* currentNode, Value* valuesArray, int currentNodeIndex)
+{
+    if(currentNode == NULL)
+    {
+        return;
+    }
+    inorder(currentNode->left, valuesArray, currentNodeIndex);
+    valuesArray[currentNodeIndex++] = currentNode;
+    inorder(currentNode->right, valuesArray, currentNodeIndex);
+}
 
 template<class Key, class Value>
 Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2)

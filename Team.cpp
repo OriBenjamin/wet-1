@@ -50,11 +50,11 @@ void Team::removePlayer( Player& player)
     }
 }
 
-std::ostream &operator<<(std::ostream &os, const Team &team) {
+/*std::ostream &operator<<(std::ostream &os, const Team &team) {
     os << "teamId: " << team.teamId << " players: " << team.players << " playersByStatistics: "
        << team.playersByStatistics;
     return os;
-}
+}*/
 
 Player *Team::getTopScorerPlayer() const {
     return topScorerPlayer;

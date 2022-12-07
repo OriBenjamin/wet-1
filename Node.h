@@ -14,8 +14,7 @@ template<class Key, class Value>
 class Node
 {
     public:
-    Node<Key,Value>* right, *left;
-    Node<Key,Value>* parent, *next, *prev;
+    Node<Key,Value>* right, *left, *parent, *next, *prev;
     Key key;
     Value* value;
     int height;
