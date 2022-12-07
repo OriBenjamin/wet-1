@@ -31,33 +31,41 @@ class Tree
     private:
     Node<Key,Value>* root;
     int size;
-    public:
-    int getSize() const {
-        return size;
-    }
 
+    public:
     Tree():
-            root(NULL), size(INITIAL_SIZE_OF_TREE){}
-//    Tree(const Node<Key,Value>& root, int size) = default;
+    root(NULL), size(INITIAL_SIZE_OF_TREE) {}
+    //Tree(const Node<Key,Value>& root, int size) = default;
     ~Tree() = default;
     Tree& operator=(const Tree& t) = delete;
 
+
     //built-in functions
+
     Node<Key,Value>* insertNode(Node<Key,Value>* currentNode,Node<Key,Value>* nodeForInsertion);
     void insert(const Key key, Value* value);
+
     Value* remove(const Key key);
     Node<Key,Value>* removeNode(Node<Key,Value>* currentNode, const Key key);
+
     Value* find(Key key);
     Node<Key,Value>* findNode(Node<Key,Value>* currentNode, const Key key);
-    Value* getLast();
-    void connectSonParent(Node<Key, Value> *currentNode,Node<Key, Value> *son);
-    //friend Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2);
-    //Value** toArray(Key begin, Key end);
-    //Key getClosest(Key key);
-    void convertToArray(const Node<Key,Value>* currentNode, Value* valuesArray, int currentNodeIndex = INITIAL_INDEX_OF_ARRAY);
-    int getBalanceFactor(const Node<Key, Value>* node);
-    Node<Key, Value>* getRoot() const {return root;}
+    Value* getFirstNode();
+    Value* getLastNode();
 
+    int getBalanceFactor(const Node<Key,Value>* node);
+    void connectSonParent(Node<Key, Value> *currentNode,Node<Key, Value> *son);
+
+
+    void convertTreeToArray(const Node<Key,Value>* currentNode, Node<Key,Value>* nodesArray, int& currentNodeIndex);
+    Tree<Key,Value> sortArrayToTree(Node<Key,Value>* array, int newTreeSize, int start, int end);
+    Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2);
+    //Key getClosest(Key key);
+
+    int getSize() const
+    {
+        return size;
+    }
 
 
     Node<Key, Value> *getRotated(Node<Key, Value> *currentNode, int rightChildBalanceFactor,
@@ -115,7 +123,7 @@ void Tree<Key,Value>::insert(const Key key, Value* value)
 }
 
 template<class Key, class Value>
-int Tree<Key,Value>::getBalanceFactor(const Node<Key, Value>* node)
+int Tree<Key,Value>::getBalanceFactor(const Node<Key,Value>* node)
 {
     if (node == nullptr) return 0;
     int leftHeight = (node->left) ? node->left->height : -1;
@@ -406,9 +414,23 @@ Node<Key,Value>* Tree<Key,Value>::findNode(Node<Key,Value>* currentNode, Key key
 
 }
 
+template<class Key, class Value>
+Value* Tree<Key,Value>::getFirstNode()
+{
+    Node<Key,Value>* currentNode = root;
+    if(currentNode == nullptr)
+    {
+        throw NodeDoesNotExist(); //other error
+    }
+    while(currentNode->left)
+    {
+        currentNode = currentNode->left;
+    }
+    return currentNode->value;
+}
 
 template<class Key, class Value>
-Value* Tree<Key,Value>::getLast()
+Value* Tree<Key,Value>::getLastNode()
 {
     Node<Key,Value>* currentNode = root;
     if(currentNode == nullptr)
@@ -423,24 +445,59 @@ Value* Tree<Key,Value>::getLast()
 }
 
 
+
 template<class Key, class Value>
-void convertToArray(const Node<Key,Value>* currentNode, Value* valuesArray, int currentNodeIndex)
+void convertTreeToArray(const Node<Key,Value>* currentNode, Node<Key,Value>* nodesArray, int& currentNodeIndex)
 {
     if(currentNode == NULL)
     {
         return;
     }
-    inorder(currentNode->left, valuesArray, currentNodeIndex);
-    valuesArray[currentNodeIndex++] = currentNode;
-    inorder(currentNode->right, valuesArray, currentNodeIndex);
+    inorder(currentNode->left, nodesArray, currentNodeIndex);
+    nodesArray[currentNodeIndex++] = *currentNode;
+    inorder(currentNode->right, nodesArray, currentNodeIndex);
 }
+
+
+template<class Key, class Value>
+Tree<Key,Value> sortArrayToTree(Node<Key,Value>* array, int newTreeSize, int start, int end)
+{
+    if(start > end)
+    {
+        return NULL;
+    }
+    int middle = (start + end)/2;
+    Node<Key,Value>* subRoot = new Node<Key,Value>(array[middle]);
+    subRoot->left = sortArrayToTree(array, newTreeSize, start, middle-1);
+    subRoot->left = sortArrayToTree(array, newTreeSize, middle+1, end);
+    return Tree<Key,Value>(subRoot, newTreeSize); //the original root
+}
+
 
 template<class Key, class Value>
 Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2)
 {
+    try
+    {
+        Node<Key,Value>* t1_array = new Node<Key,Value>[t1.size];
+        Node<Key,Value>* t2_array = new Node<Key,Value>[t2.size];
+        Node<Key,Value>* mergedArray = new Node<Key,Value>[t1.size+t2.size];
+        convertTreeToArray(t1.root, t1_array);
+        convertTreeToArray(t2.root, t2_array);
+        mergeSortWithAVLTree(mergedArray, t1.size+t2.size, t1_array, t2_array);
 
+        int start = 0, end = t1.size+t2.size -1;
+        return sortArrayToTree(mergedArray, t1.size+t2.size, start, end);
+    }
+    catch(std::bad_alloc& e)
+    {
+        e.what();
+    }
+    catch(std::invalid_argument& e)
+    {
+        e.what();
+    }
 }
-
 
 #endif //HW1_TREE_H
 

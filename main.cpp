@@ -43,7 +43,7 @@ int main() {
 
     t1->insertPlayer(*p1);
     t1->insertPlayer(*p2);
-    cout<<*t1;
+    //cout<<*t1;
     cout<< "\ntop scorer:"<<*t1->getTopScorerPlayer();
 
     return 0;
