@@ -12,26 +12,19 @@ class Player;
 
 class Team
 {
-    private:
     int teamId;
-public:
-    int getID() const;
-
-private:
     int points;
     int goalSum;
     int cardSum;
     int teamGamesPlayed;
     int goalKeepers;
-    Player* topScorerPlayer;
-public:
-    Player *getTopScorerPlayer() const;
 
 private:
+    Player* topScorerPlayer;
     Tree<int,Player> players;
     Tree<Player&,Player> playersByStatistics;
 
-    public:
+public:
     Team() = delete;
     Team(int teamId, int points, int goalsSum = 0, int cardsSum = 0, int teamGamesPlayed = 0,
          int goalKeepers = 0, const Player* topScorerPlayer = nullptr);
@@ -41,7 +34,20 @@ private:
     void insertPlayer(Player& player);
     void removePlayer(Player& player);
     int getSize() const;
-    friend std::ostream &operator<<(std::ostream &os, const Team &team);
+    int getID() const;
+    int getGoalKeepers() const;
+    int getPoints() const;
+    int getGoalSum() const;
+    int getCardSum() const;
+    int getTeamGamesPlayed() const;
+    Player *getTopScorerPlayer() const;
+    void setGoalKeepers(int goalKeepers);
+    void setPoints(int points);
+    void setGoalSum(int goalSum);
+    void setCardSum(int cardSum);
+    void setTeamGamesPlayed(int teamGamesPlayed);
+
+    //friend std::ostream &operator<<(std::ostream &os, const Team &team);
 
 /*
     //const getters

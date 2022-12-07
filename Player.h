@@ -20,8 +20,7 @@ class Player
     bool canBeGoalkeeper;
     Team* team;
 
-
-    public:
+public:
     Player() = delete;
     Player(int playerId, int gamesPlayed, int goals, int cardsReceived, bool canBeGoalkeeper, Team* team);
     ~Player() = default;
@@ -39,6 +38,7 @@ class Player
     int getPlayerGoals() const {return this->goals;}
     int getPlayerCardsReceived() const {return this->cardsReceived;}
     bool getPlayerCanBeGooalkeeper() const {return this->canBeGoalkeeper;}
+    Team *getTeam() const;
 
     //getters
     int& getPlayerId() {return this->playerId;}
