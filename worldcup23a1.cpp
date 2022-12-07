@@ -1,27 +1,25 @@
 #include "worldcup23a1.h"
 
-world_cup_t::world_cup_t(): teams(), players(), playersByStatistics(), topScorer(nullptr)
+world_cup_t::world_cup_t():
+teams(), playersById(), playersByStatistics(), knockoutTeams(), topScorerPlayer(nullptr) {}
+
+/*world_cup_t::~world_cup_t()
 {
 
-}
-
-world_cup_t::~world_cup_t()
-{
-    // TODO: Your code goes here
-}
-
+}*/
 
 StatusType world_cup_t::add_team(int teamId, int points)
 {
-    try {
+    try
+    {
         Team *team = new Team(teamId, points);
         teams.insert(teamId,team);
     }
-    catch(std::invalid_argument)
+    catch(std::invalid_argument& e)
     {
         return StatusType::INVALID_INPUT;
     }
-    catch (std::bad_alloc&)
+    catch (std::bad_alloc& e)
     {
         return StatusType::ALLOCATION_ERROR;
     }
@@ -36,29 +34,35 @@ StatusType world_cup_t::remove_team(int teamId)
 {
     if(teamId<=0) return StatusType::INVALID_INPUT;
     Team* team;
+
     try {
         team = teams.find(teamId);
-        if (team->getSize() != 0) {
+        if (team->getSize() != 0)
+        {
             return StatusType::FAILURE;
         }
         team = teams.remove(teamId);
         delete team;
     }
-    catch (NodeDoesNotExist)
+    catch (NodeDoesNotExist&)
     {
         return StatusType::FAILURE;
     }
-    catch (std::bad_alloc&) //?
-    {
-        return StatusType::ALLOCATION_ERROR;
+
+    try{
+        knockoutTeams.remove(teamId);
     }
+    catch(NodeDoesNotExist&) //nothing to do
+    {}
+
     return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
                                    int goals, int cards, bool goalKeeper)
 {
-    try {
+    try
+    {
         if(playerId<=0 || gamesPlayed<0 || goals<0 || cards<0 ||
            (gamesPlayed == 0 && (cards>0 || goals>0)) ) //Invalid Input should be checked first
         {
@@ -67,7 +71,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         Team* team = teams.find(teamId);
         Player* player = new Player(playerId,gamesPlayed,goals,cards,goalKeeper,team);
         team->insertPlayer(*player);
-        players.insert(player->getPlayerId(), player);
+        playersById.insert(player->getPlayerId(), player);
         playersByStatistics.insert(*player, player);
         if(topScorerPlayer == nullptr)
         {
@@ -77,16 +81,19 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         {
             topScorerPlayer = player;
         }
+        if(goalKeeper) team->setGoalKeepers(team->getGoalKeepers() + 1);
+        team->setCardSum(team->getCardSum() + cards);
+        team->setGoalSum(team->getGoalSum() + goals);
     }
-    catch(std::invalid_argument)
+    catch(std::invalid_argument&)
     {
         return StatusType::INVALID_INPUT;
     }
-    catch(std::bad_alloc)
+    catch(std::bad_alloc&)
     {
         return StatusType::ALLOCATION_ERROR;
     }
-    catch(NodeAlreadyExist)
+    catch(NodeAlreadyExist&)
     {
         return StatusType::FAILURE;
     }
@@ -95,20 +102,89 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
 
 StatusType world_cup_t::remove_player(int playerId)
 {
-    // TODO: Your code goes here
+    try
+    {
+        if(playerId <= 0)
+        {
+            return StatusType::INVALID_INPUT;
+        }
+        Player* player = playersById.remove(playerId);
+        playersByStatistics.remove(*player);
+        Team* team = player->getTeam();
+        team->removePlayer(*player);
+        if(player->getPlayerCanBeGooalkeeper()) team->setGoalKeepers(team->getGoalKeepers() - 1);
+        team->setCardSum(team->getCardSum() - player->getPlayerCardsReceived());
+        team->setGoalSum(team->getGoalSum() - player->getPlayerGoals());
+        delete player;
+    }
+    catch(NodeDoesNotExist&)
+    {
+        return StatusType::FAILURE;
+    }
     return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
                                             int scoredGoals, int cardsReceived)
 {
-    // TODO: Your code goes here
+    if(playerId<=0 || gamesPlayed<0 || scoredGoals<0 || cardsReceived<0)
+    {
+        return  StatusType::INVALID_INPUT;
+    }
+    try {
+        Player *player = playersById.find(playerId);
+        playersByStatistics.remove(*player);
+        player->getTeam()->removePlayer(*player);
+        player->setGamesPlayed(player->getPlayerGamesPlayed()+gamesPlayed);
+        player->setCardsReceived(player->getPlayerCardsReceived()+cardsReceived);
+        player->setGoals(player->getPlayerGoals()+scoredGoals);
+        playersByStatistics.insert(*player,player);
+        player->getTeam()->insertPlayer(*player);
+    }
+    catch (NodeDoesNotExist&)
+    {
+        return StatusType::FAILURE;
+    }
     return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::play_match(int teamId1, int teamId2)
 {
-    // TODO: Your code goes here
+    if(teamId1<=0 || teamId2<=0 || teamId1==teamId2)
+    {
+        return StatusType::INVALID_INPUT;
+    }
+    try {
+        Team* team1 = teams.find(teamId1);
+        Team* team2 = teams.find(teamId2);
+        if(team1->getSize() < 11 || team2->getSize() < 11
+            || team1->getGoalKeepers()<=0 || team2->getGoalKeepers()<=0)
+        {
+           return StatusType::FAILURE;
+        }
+        int team1Result = team1->getPoints() + team1->getGoalSum() - team1->getCardSum();
+        int team2Result = team2->getPoints() + team2->getGoalSum() - team2->getCardSum();
+        if(team1Result == team2Result)
+        {
+            team1->setPoints(team1->getPoints() + 1);
+            team2->setPoints(team2->getPoints() + 1);
+        }
+        else if(team1Result > team2Result)
+        {
+            team1->setPoints(team1->getPoints() + 3);
+        }
+        else if(team1Result < team2Result)
+        {
+            team2->setPoints(team2->getPoints() + 3);
+        }
+        team1->setTeamGamesPlayed(team1->getTeamGamesPlayed() + 1);
+        team2->setTeamGamesPlayed(team2->getTeamGamesPlayed() + 1);
+    }
+    catch(NodeDoesNotExist&)
+    {
+        return StatusType::FAILURE;
+    }
+
     return StatusType::SUCCESS;
 }
 
