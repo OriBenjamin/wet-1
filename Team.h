@@ -7,7 +7,7 @@
 
 #include <cstdlib>
 #include "Tree.h"
-#include "Player.h"
+class Player;
 
 class Team
 {
@@ -20,7 +20,7 @@ class Team
     int goalKeepers;
     Player* topScorerPlayer;
     Tree<int,Player> players;
-    Tree<Player,Player> playersByStatistics;
+    Tree<Player&,Player> playersByStatistics;
 
     public:
     Team() = delete;
@@ -30,7 +30,7 @@ class Team
     Team(const Team& t) = delete;
     Team& operator=(const Team& t) = delete;
     void insertPlayer(Player& player);
-    void removePlayer(const Player& player);
+    void removePlayer(Player& player);
 
 /*
     //const getters
@@ -62,7 +62,8 @@ class Team
     void setGoalsSum(int GoalsSum);
     void setCardsSum(int CardsSum);
     void setTeamGamesPlayed(int TeamGamesPlayed);
-    void setHasGoalKeeper(bool HasGoalKeeper); //not sure */
+    void setHasGoalKeeper(bool HasGoalKeeper); //not sure
+    */
 };
 
 

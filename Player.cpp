@@ -11,7 +11,7 @@ cardsReceived(cardsReceived), canBeGoalkeeper(canBeGoalkeeper), team(team)
     if(playerId<=0 || teamId<=0 || gamesPlayed<0 || goals<0 || cardsReceived<0 ||
     (gamesPlayed == 0 && (cardsReceived>0 || goals>0)) || team == nullptr)
     {
-        throw std::invalid_argument("Invalid input- cant build such player");
+     //   throw std::invalid_argument("Invalid input- cant build such player");
     }
 }
 
@@ -41,11 +41,11 @@ bool Player::operator<(const Player& player) const
     }
     else
     {
-        if(this->cardsReceived < player.cardsReceived)
+        if(this->cardsReceived > player.cardsReceived)
         {
             return true;
         }
-        else if(this->cardsReceived > player.cardsReceived)
+        else if(this->cardsReceived < player.cardsReceived)
         {
             return false;
         }
@@ -72,6 +72,13 @@ bool operator>(const Player& player1, const Player& player2)
 bool Player::operator==(const Player& player) const
 {
     return this->playerId == player.playerId;
+}
+
+std::ostream &operator<<(std::ostream &os, const Player &player) {
+    os << "playerId: " << player.playerId << " teamId: " << player.teamId << " gamesPlayed: " << player.gamesPlayed
+       << " goals: " << player.goals << " cardsReceived: " << player.cardsReceived << " canBeGoalkeeper: "
+       << player.canBeGoalkeeper;
+    return os;
 }
 
 

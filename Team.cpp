@@ -3,6 +3,7 @@
 //
 
 #include "Team.h"
+#include "Player.h"
 
 Team::Team(int teamId, int points, int goalsSum, int cardsSum, int teamGamesPlayed,
            int goalKeepers, const Player* topScorerPlayer):
@@ -11,8 +12,8 @@ Team::Team(int teamId, int points, int goalsSum, int cardsSum, int teamGamesPlay
 void Team::insertPlayer(Player& player)
 {
 
-    players.createAndInsertNode(player.getPlayerId(), &player);
-    playersByStatistics.createAndInsertNode(player, &player);
+    players.insert(player.getPlayerId(), &player);
+    playersByStatistics.insert(player, &player);
     goalSum+=player.getPlayerGoals();
     cardSum+=player.getPlayerCardsReceived();
     if(player.getPlayerGoals() > topScorerPlayer->getPlayerGoals())
@@ -26,13 +27,13 @@ void Team::insertPlayer(Player& player)
     }
 }
 
-void Team::removePlayer(const Player& player)
+void Team::removePlayer( Player& player)
 {
     players.remove(player.getPlayerId());
     playersByStatistics.remove(player);
     goalSum-=player.getPlayerGoals();
     cardSum-=player.getPlayerCardsReceived();
-    topScorerPlayer = playersByStatistics.findTheRightmostNode();
+    topScorerPlayer = playersByStatistics.getLast();
     if(player.getPlayerCanBeGooalkeeper())
     {
         goalKeepers--;

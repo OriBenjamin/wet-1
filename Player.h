@@ -7,6 +7,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <ostream>
 #include "Team.h"
 
 class Player
@@ -25,8 +26,8 @@ class Player
     Player() = delete;
     Player(int playerId, int teamId, int gamesPlayed, int goals, int cardsReceived, bool canBeGoalkeeper, Team* team);
     ~Player() = default;
-    Player(const Player& p) = delete;
-    Player& operator=(const Player& p) = delete;
+    Player(const Player& p) = default;
+    Player& operator=(const Player& p) = default;
 
 
     void updatePlayer(int gamesPlayed, int goals, int cardsReceived);
@@ -43,6 +44,8 @@ class Player
 
     //getters
     int& getPlayerId() {return this->playerId;}
+
+    friend std::ostream &operator<<(std::ostream &os, const Player &player);
 
 
 };
