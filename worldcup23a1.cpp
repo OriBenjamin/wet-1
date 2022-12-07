@@ -1,8 +1,8 @@
 #include "worldcup23a1.h"
 
-world_cup_t::world_cup_t()
+world_cup_t::world_cup_t(): teams(), players(), playersByStatistics(), topScorer(nullptr)
 {
-    // TODO: Your code goes here
+
 }
 
 world_cup_t::~world_cup_t()
@@ -13,20 +13,83 @@ world_cup_t::~world_cup_t()
 
 StatusType world_cup_t::add_team(int teamId, int points)
 {
-    // TODO: Your code goes here
+    try {
+        Team *team = new Team(teamId, points);
+        teams.insert(teamId,team);
+    }
+    catch(std::invalid_argument)
+    {
+        return StatusType::INVALID_INPUT;
+    }
+    catch (std::bad_alloc&)
+    {
+        return StatusType::ALLOCATION_ERROR;
+    }
+    catch (NodeAlreadyExist&)
+    {
+        return StatusType::FAILURE;
+    }
     return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::remove_team(int teamId)
 {
-    // TODO: Your code goes here
-    return StatusType::FAILURE;
+    if(teamId<=0) return StatusType::INVALID_INPUT;
+    Team* team;
+    try {
+        team = teams.find(teamId);
+        if (team->getSize() != 0) {
+            return StatusType::FAILURE;
+        }
+        team = teams.remove(teamId);
+        delete team;
+    }
+    catch (NodeDoesNotExist)
+    {
+        return StatusType::FAILURE;
+    }
+    catch (std::bad_alloc&) //?
+    {
+        return StatusType::ALLOCATION_ERROR;
+    }
+    return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
                                    int goals, int cards, bool goalKeeper)
 {
-    // TODO: Your code goes here
+    try {
+        if(playerId<=0 || gamesPlayed<0 || goals<0 || cards<0 ||
+           (gamesPlayed == 0 && (cards>0 || goals>0)) ) //Invalid Input should be checked first
+        {
+            return StatusType::INVALID_INPUT;
+        }
+        Team* team = teams.find(teamId);
+        Player* player = new Player(playerId,gamesPlayed,goals,cards,goalKeeper,team);
+        team->insertPlayer(*player);
+        players.insert(player->getPlayerId(), player);
+        playersByStatistics.insert(*player, player);
+        if(topScorerPlayer == nullptr)
+        {
+            topScorerPlayer = player;
+        }
+        else if(player->getPlayerGoals() > topScorerPlayer->getPlayerGoals())
+        {
+            topScorerPlayer = player;
+        }
+    }
+    catch(std::invalid_argument)
+    {
+        return StatusType::INVALID_INPUT;
+    }
+    catch(std::bad_alloc)
+    {
+        return StatusType::ALLOCATION_ERROR;
+    }
+    catch(NodeAlreadyExist)
+    {
+        return StatusType::FAILURE;
+    }
     return StatusType::SUCCESS;
 }
 

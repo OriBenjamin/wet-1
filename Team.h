@@ -6,6 +6,7 @@
 #define wet_1_TEAM_H
 
 #include <cstdlib>
+#include <ostream>
 #include "Tree.h"
 class Player;
 
@@ -13,30 +14,40 @@ class Team
 {
     private:
     int teamId;
+public:
+    int getID() const;
+
+private:
     int points;
     int goalSum;
     int cardSum;
     int teamGamesPlayed;
     int goalKeepers;
     Player* topScorerPlayer;
+public:
+    Player *getTopScorerPlayer() const;
+
+private:
     Tree<int,Player> players;
     Tree<Player&,Player> playersByStatistics;
 
     public:
     Team() = delete;
     Team(int teamId, int points, int goalsSum = 0, int cardsSum = 0, int teamGamesPlayed = 0,
-         int goalKeepers = 0, const Player* topScorerPlayer= nullptr);
+         int goalKeepers = 0, const Player* topScorerPlayer = nullptr);
     ~Team() = default;
     Team(const Team& t) = delete;
     Team& operator=(const Team& t) = delete;
     void insertPlayer(Player& player);
     void removePlayer(Player& player);
+    int getSize() const;
+    friend std::ostream &operator<<(std::ostream &os, const Team &team);
 
 /*
     //const getters
     int getTeamId() const {return this->TeamId;}
     int getPoints() const {return this->Points;}
-    int getSize() const {return this->Size;}
+    int getSize() const {return this->size;}
     Tree<Shared_ptr<Player>, Comperator> getPlayers() const {return this->Players;}
     int getGoalsSum() const {return this->GoalsSum;}
     int getCardsSum() const {return this->CardsSum;}
@@ -45,9 +56,9 @@ class Team
     bool getHasGoalKeeper() const {return this->HasGoalKeeper;}
 
     //getters
-    int& getTeamId() {return this->TeamId;}
+    int& getID() {return this->TeamId;}
     int& getPoints() {return this->Points;}
-    int& getSize() {return this->Size;}
+    int& getSize() {return this->size;}
     Tree<Shared_ptr<Player>, Comperator>& getPlayers() {return this->Players;}
     int& getGoalsSum() {return this->GoalsSum;}
     int& getCardsSum() {return this->CardsSum;}

@@ -4,14 +4,14 @@
 
 #include "Player.h"
 
-Player::Player(int playerId, int teamId, int gamesPlayed, int goals, int cardsReceived, bool canBeGoalkeeper, Team* team):
-playerId(playerId), teamId(teamId), gamesPlayed(gamesPlayed), goals(goals),
+Player::Player(int playerId, int gamesPlayed, int goals, int cardsReceived, bool canBeGoalkeeper, Team* team):
+playerId(playerId), gamesPlayed(gamesPlayed), goals(goals),
 cardsReceived(cardsReceived), canBeGoalkeeper(canBeGoalkeeper), team(team)
 {
-    if(playerId<=0 || teamId<=0 || gamesPlayed<0 || goals<0 || cardsReceived<0 ||
+    if(playerId<=0 || gamesPlayed<0 || goals<0 || cardsReceived<0 ||
     (gamesPlayed == 0 && (cardsReceived>0 || goals>0)) || team == nullptr)
     {
-     //   throw std::invalid_argument("Invalid input- cant build such player");
+       throw std::invalid_argument("Invalid input- can't build such player");
     }
 }
 
@@ -75,7 +75,7 @@ bool Player::operator==(const Player& player) const
 }
 
 std::ostream &operator<<(std::ostream &os, const Player &player) {
-    os << "playerId: " << player.playerId << " teamId: " << player.teamId << " gamesPlayed: " << player.gamesPlayed
+    os << "playerId: " << player.playerId << " teamId: " << player.team->getID() << " gamesPlayed: " << player.gamesPlayed
        << " goals: " << player.goals << " cardsReceived: " << player.cardsReceived << " canBeGoalkeeper: "
        << player.canBeGoalkeeper;
     return os;

@@ -13,29 +13,34 @@
 
 const int INITIAL_SIZE_OF_TREE = 0;
 
+class NodeAlreadyExist : public std::exception
+{
+public:
+    const char* what() const noexcept override {return "Node already exist in this tree";}
+};
+class NodeDoesNotExist : public std::exception
+{
+public:
+    const char* what() const noexcept override {return "Node does not exist in this tree";}
+};
+
 template<class Key, class Value>
 class Tree
 {
     private:
-    Node<Key,Value>* Root;
-    int Size;
+    Node<Key,Value>* root;
+    int size;
+public:
+    int getSize() const {
+        return size;
+    }
 
-    public:
+public:
     Tree():
-    Root(NULL), Size(INITIAL_SIZE_OF_TREE){}
-//    Tree(const Node<Key,Value>& Root, int Size) = default;
+            root(NULL), size(INITIAL_SIZE_OF_TREE){}
+//    Tree(const Node<Key,Value>& root, int size) = default;
     ~Tree() = default;
     Tree& operator=(const Tree& t) = delete;
-    class NodeAlreadyExist : public std::exception
-    {
-        public:
-        const char* what() const noexcept override {return "Node already exist in this tree";}
-    };
-    class NodeDoesNotExist : public std::exception
-    {
-        public:
-        const char* what() const noexcept override {return "Node does not exist in this tree";}
-    };
 
     //built-in functions
     Node<Key,Value>* insertNode(Node<Key,Value>* currentNode,Node<Key,Value>* nodeForInsertion);
@@ -49,17 +54,17 @@ class Tree
     //friend void mergeTrees(Tree<Key,Value> t1, Tree<Key,Value> t2);
     //Value** toArray(Key begin, Key end);
     //Key getClosest(Key key);
+
     int getBalanceFactor(const Node<Key, Value>* node);
-    Value* findTheRightmostNode() const;
     Node<Key, Value> *getRotated(Node<Key, Value> *currentNode, int rightChildBalanceFactor,
                                  int leftChildBalanceFactor, int balanceFactor);
-    void print()
+    void print() const
     {
-        printNode(Root);
-        //cout << *Root->value;
+        printNode(root);
+        //cout << *root->value;
     }
 
-    void printNode(Node<Key,Value>* node)//also... if yes move outside class
+    void printNode(Node<Key,Value>* node) const//also... if yes move outside class
     {
         if(node == nullptr) return;
         printNode(node->left);
@@ -77,6 +82,11 @@ class Tree
         }
     }
 
+    friend std::ostream &operator<<(std::ostream &os, const Tree &tree) {
+        tree.print();
+        return os;
+    }
+
 };
 
 template<class Key, class Value>
@@ -86,11 +96,14 @@ void Tree<Key,Value>::insert(const Key key, Value* value)
     {
         throw std::invalid_argument("invalid argument- cant insert an empty node");
     }
-        Node<Key,Value>* nodeForInsertion = new Node<Key,Value>(key,value);
-        Root = insertNode(Root, nodeForInsertion);
+
+        Node<Key, Value> *nodeForInsertion = new Node<Key, Value>(key, value);
+
+    root = insertNode(root, nodeForInsertion);
         if(nodeForInsertion->next) nodeForInsertion->next->prev = nodeForInsertion;
         if(nodeForInsertion->prev) nodeForInsertion->prev->next = nodeForInsertion;
 
+    this->size++;
 }
 
 template<class Key, class Value>
@@ -265,9 +278,10 @@ Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, int rightChildBalanc
 template<class Key, class Value>
 Value* Tree<Key,Value>::remove(const Key key)
 {
-    Node<Key,Value>* removedNode = removeNode(Root, key);
+    Node<Key,Value>* removedNode = removeNode(root, key);
     Value* val = removedNode->value;
     delete removedNode;
+    this->size++;
     return val;
 }
 
@@ -332,9 +346,9 @@ Node<Key,Value>* Tree<Key,Value>::removeNode(Node<Key, Value> *currentNode, cons
         int leftChildBalanceFactor = getBalanceFactor(currentNode->left);
         int balanceFactor = getBalanceFactor(currentNode);
         Node<Key,Value>* rotatedTree = getRotated(currentNode, rightChildBalanceFactor, leftChildBalanceFactor, balanceFactor);
-        if(Root == currentNode)
+        if(root == currentNode)
         {
-            Root = rotatedTree;
+            root = rotatedTree;
         }
     }
     return removedNode;
@@ -359,7 +373,7 @@ void Tree<Key,Value>::connectSonParent(Node<Key, Value> *currentNode,Node<Key, V
 template<class Key, class Value>
 Value* Tree<Key,Value>::find(const Key key)
 {
-    return findNode(Root, key)->value;
+    return findNode(root, key)->value;
 }
 
 template<class Key, class Value>
@@ -388,7 +402,7 @@ Node<Key,Value>* Tree<Key,Value>::findNode(Node<Key,Value>* currentNode, Key key
 template<class Key, class Value>
 Value* Tree<Key,Value>::getLast()
 {
-    Node<Key,Value>* currentNode = Root;
+    Node<Key,Value>* currentNode = root;
     if(currentNode == nullptr)
     {
         throw NodeDoesNotExist(); //other error

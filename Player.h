@@ -14,7 +14,6 @@ class Player
 {
     private:
     int playerId;
-    int teamId;
     int gamesPlayed;
     int goals;
     int cardsReceived;
@@ -24,7 +23,7 @@ class Player
 
     public:
     Player() = delete;
-    Player(int playerId, int teamId, int gamesPlayed, int goals, int cardsReceived, bool canBeGoalkeeper, Team* team);
+    Player(int playerId, int gamesPlayed, int goals, int cardsReceived, bool canBeGoalkeeper, Team* team);
     ~Player() = default;
     Player(const Player& p) = default;
     Player& operator=(const Player& p) = default;
@@ -36,7 +35,6 @@ class Player
 
     //const getters
     int getPlayerId() const {return this->playerId;}
-    int getPlayerTeamId() const {return this->teamId;}
     int getPlayerGamesPlayed() const {return this->gamesPlayed;}
     int getPlayerGoals() const {return this->goals;}
     int getPlayerCardsReceived() const {return this->cardsReceived;}
