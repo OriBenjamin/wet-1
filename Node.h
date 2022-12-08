@@ -7,7 +7,8 @@
 
 #include <stdlib.h>
 #include <memory>
-#include "Tree.h"
+template<class Key, class Value>
+class Tree;
 
 const int INITIAL_HEIGHT = 0;
 
@@ -54,7 +55,7 @@ bool Node<Key,Value>::operator<(const Node<Key,Value>& node) const
 template<class Key, class Value>
 bool operator==(const Node<Key,Value>& node1, const Node<Key,Value>& node2)
 {
-    if(!(node1 < node2) && !(node1 > node2))
+    if(!(node1 < node2) && !(node2 < node1))
     {
         return true;
     }
@@ -72,21 +73,21 @@ bool operator>(const Node<Key,Value>& node1, const Node<Key,Value>& node2)
 }
 
 template<class Key, class Value>
-Node<Key,Value>* mergeSortWithAVLTree(Node<Key,Value>* mergedArray, int mergedArraySize, Node<Key,Value>* t1_array, Node<Key,Value>* t2_array)
+void mergeSortWithAVLTree(Node<Key,Value>* mergedArray, int mergedArraySize, Node<Key,Value>* t1_array, Node<Key,Value>* t2_array)
 {
     if(mergedArray == nullptr || t1_array == nullptr || t1_array == nullptr || mergedArraySize < 1)
     {
         throw std::invalid_argument("invalid argument- cant merge arrays");
     }
-    Tree< Node<Key,Value>, Node<Key,Value>* > treeOfPointers = Tree<Node<Key,Value>,Node<Key,Value>*>();
+    Tree<Node<Key,Value>, Node<Key,Value>> treeOfPointers = Tree<Node<Key,Value>,Node<Key,Value>>();
     treeOfPointers.insert(*t1_array, t1_array);
     treeOfPointers.insert(*t2_array, t2_array);
     for(int i=0; i<mergedArraySize; i++)
     {
-        Node<Key,Value>* nodeToRemove = *(treeOfPointers.getFirstNode());
+        Node<Node<Key,Value>,Node<Key,Value>>* nodeToRemove = treeOfPointers.getFirstNode();
         mergedArray[i] = *(treeOfPointers.remove(nodeToRemove->key));
         nodeToRemove++;
-        treeOfPointers.insert(*nodeToRemove, nodeToRemove);
+        treeOfPointers.insert(*nodeToRemove->value, nodeToRemove->value);
     }
 
 }

@@ -43,7 +43,7 @@ void Team::removePlayer( Player& player)
     playersByStatistics.remove(player);
     goalSum-=player.getPlayerGoals();
     cardSum-=player.getPlayerCardsReceived();
-    topScorerPlayer = playersByStatistics.getLast();
+    topScorerPlayer = playersByStatistics.getLastNode();
     if(player.getPlayerCanBeGooalkeeper())
     {
         goalKeepers--;
