@@ -75,23 +75,10 @@ bool Player::operator==(const Player& player) const
 }
 
 std::ostream &operator<<(std::ostream &os, const Player &player) {
-    os << "playerId: " << player.playerId << " teamId: " << player.team->getID() << " gamesPlayed: " << player.gamesPlayed
+    os << "playerId: " << player.playerId << " teamId: " << player.team->getTeamId() << " gamesPlayed: " << player.gamesPlayed
        << " goals: " << player.goals << " cardsReceived: " << player.cardsReceived << " canBeGoalkeeper: "
        << player.canBeGoalkeeper;
     return os;
-}
-
-
-void Player::setGamesPlayed(int gamesPlayed) {
-    Player::gamesPlayed = gamesPlayed;
-}
-
-void Player::setGoals(int goals) {
-    Player::goals = goals;
-}
-
-void Player::setCardsReceived(int cardsReceived) {
-    Player::cardsReceived = cardsReceived;
 }
 
 

@@ -26,7 +26,7 @@ void Team::insertPlayer(Player& player)
     {
         topScorerPlayer = &player;
     }
-    topScorerPlayer = playersByStatistics.getLastNode();
+    topScorerPlayer = playersByStatistics.getLastNodeValue();
     if(player.getPlayerCanBeGooalkeeper())
     {
         goalKeepers++;
@@ -39,7 +39,7 @@ void Team::removePlayer( Player& player)
     playersByStatistics.remove(player);
     goalSum-=player.getPlayerGoals();
     cardSum-=player.getPlayerCardsReceived();
-    topScorerPlayer = playersByStatistics.getLastNode();
+    topScorerPlayer = playersByStatistics.getLastNodeValue();
     if(player.getPlayerCanBeGooalkeeper())
     {
         goalKeepers--;
@@ -51,57 +51,5 @@ void Team::removePlayer( Player& player)
        << team.playersByStatistics;
     return os;
 }*/
-
-Player *Team::getTopScorerPlayer() const {
-    return topScorerPlayer;
-}
-
-int Team::getID() const {
-    return teamId;
-}
-
-int Team::getSize() const {
-    return players.getSize();
-}
-
-void Team::setGoalKeepers(int goalKeepers) {
-    this->goalKeepers = goalKeepers;
-}
-
-int Team::getGoalKeepers() const {
-    return this->goalKeepers;
-}
-
-int Team::getPoints() const {
-    return points;
-}
-
-int Team::getGoalSum() const {
-    return goalSum;
-}
-
-int Team::getCardSum() const {
-    return cardSum;
-}
-
-int Team::getTeamGamesPlayed() const {
-    return teamGamesPlayed;
-}
-
-void Team::setPoints(int points) {
-    Team::points = points;
-}
-
-void Team::setGoalSum(int goalSum) {
-    Team::goalSum = goalSum;
-}
-
-void Team::setCardSum(int cardSum) {
-    Team::cardSum = cardSum;
-}
-
-void Team::setTeamGamesPlayed(int teamGamesPlayed) {
-    Team::teamGamesPlayed = teamGamesPlayed;
-}
 
 

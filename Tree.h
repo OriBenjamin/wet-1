@@ -71,8 +71,7 @@ class Tree
 
 
 
-    //what is that
-    void updateHeight(Node<Key,Value>* node);
+
     Node<Key, Value> *getRotated(Node<Key, Value> *currentNode, int rightChildBalanceFactor,
                                  int leftChildBalanceFactor, int balanceFactor);
 
@@ -103,6 +102,16 @@ class Tree
 
 };
 
+template<class Key, class Value>
+void updateHeight(Node<Key,Value>* node)
+{
+    if(node != nullptr)
+    {
+        int leftHeight = (node->left) ? node->left->height : -1;
+        int rightHeight = (node->right) ? node->right->height : -1;
+        node->height = (leftHeight >= rightHeight) ? (leftHeight + 1) : (rightHeight + 1);
+    }
+}
 
 template<class Key, class Value>
 Tree<Key,Value>::~Tree()
@@ -454,16 +463,6 @@ Node<Key,Value>* Tree<Key,Value>::findNode(Node<Key,Value>* currentNode, Key key
 
 }
 
-template<class Key, class Value>
-void updateHeight(Node<Key,Value>* node)
-{
-    if(node != nullptr)
-    {
-        int leftHeight = (node->left) ? node->left->height : -1;
-        int rightHeight = (node->right) ? node->right->height : -1;
-        node->height = (leftHeight >= rightHeight) ? (leftHeight + 1) : (rightHeight + 1);
-    }
-}
 template<class Key, class Value>
 Node<Key,Value>* Tree<Key,Value>::getFirstNode() const
 {

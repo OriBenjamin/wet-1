@@ -33,6 +33,7 @@ public:
     void updatePlayer(int gamesPlayed, int goals, int cardsReceived);
     bool operator<(const Player& player) const;
     bool operator==(const Player& player) const;
+    friend std::ostream &operator<<(std::ostream &os, const Player &player);
 
     //const getters
     int getPlayerId() const {return this->playerId;}

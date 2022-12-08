@@ -52,11 +52,11 @@ class Team
 
 
     //setters
-    void setGoalKeepers(int goalKeepers);
-    void setPoints(int points);
-    void setGoalSum(int goalSum);
-    void setCardSum(int cardSum);
-    void setTeamGamesPlayed(int teamGamesPlayed);
+    void setGoalKeepers(int goalKeepers) {this->goalKeepers=goalKeepers;};
+    void setPoints(int points) {this->points=points;};
+    void setGoalSum(int goalSum) {this->goalSum=goalSum;};
+    void setCardSum(int cardSum) {this->cardSum=cardSum;};
+    void setTeamGamesPlayed(int teamGamesPlayed) {this->teamGamesPlayed=teamGamesPlayed;};
 
     //friend std::ostream &operator<<(std::ostream &os, const Team &team);
 
