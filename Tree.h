@@ -560,7 +560,7 @@ void updateNextAndPrev(Node<Key,Value>* currentNode, int size, Node<Key,Value>* 
 }
 
 template<class Key, class Value>
-Tree<Key,Value>* mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2)
+Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2)
 {
     Node<Key,Value>* *t1_array = new Node<Key,Value>*[t1.getSize()];
     Node<Key,Value>* *t2_array = new Node<Key,Value>*[t2.getSize()];
@@ -576,9 +576,9 @@ Tree<Key,Value>* mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2)
     Node<Key,Value>* subRoot = sortArrayToTree(mergedArray, start, end,t1.getSize()+t2.getSize(),*mergedArray);
     Node<Key,Value>* *nodesArray = new Node<Key,Value>*[t1.getSize()+t2.getSize()];
     updateNextAndPrev(subRoot, t1.getSize()+t2.getSize(), nodesArray);
-    delete nodesArray;
+    delete[] nodesArray;
     delete[] mergedArray;
-    return new Tree<Key,Value>(subRoot, t1.getSize()+t2.getSize() -1) ;
+    return Tree<Key,Value>(subRoot, t1.getSize()+t2.getSize() -1) ;
 }
 
 #endif //HW1_TREE_H

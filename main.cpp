@@ -68,10 +68,10 @@ int main() {
 
     cout << tree1 <<"\n" << tree2;
 
-    Tree<int,int>* tree3 = mergeTrees(tree1,tree2);
+    Tree<int,int> tree3 = mergeTrees(tree1,tree2);
     //Tree<int,int> t3 = *tree3;
 
-    tree3->print();
+    tree3.print();
     //cout << tree3[0];
  //   delete tree3;
     tree2.deleteTree(false);
