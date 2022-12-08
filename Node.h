@@ -4,7 +4,7 @@
 
 #ifndef wet_1_NODE_H
 #define wet_1_NODE_H
-
+#include <iostream>
 #include <stdlib.h>
 #include <memory>
 template<class Key, class Value>
@@ -73,9 +73,9 @@ bool operator>(const Node<Key,Value>& node1, const Node<Key,Value>& node2)
 }
 
 template<class Key, class Value>
-void mergeSortWithAVLTree(Node<Key,Value>* mergedArray, int mergedArraySize, Node<Key,Value>* t1_array, Node<Key,Value>* t2_array)
+void mergeSortWithAVLTree(Node<Key,Value>* mergedArray, int t1_size, int t2_size, Node<Key,Value>* t1_array, Node<Key,Value>* t2_array)
 {
-    if(mergedArray == nullptr || t1_array == nullptr || t1_array == nullptr || mergedArraySize < 1)
+   /* if(mergedArray == nullptr || t1_array == nullptr || t1_array == nullptr || mergedArraySize < 1)
     {
         throw std::invalid_argument("invalid argument- cant merge arrays");
     }
@@ -85,10 +85,38 @@ void mergeSortWithAVLTree(Node<Key,Value>* mergedArray, int mergedArraySize, Nod
     for(int i=0; i<mergedArraySize; i++)
     {
         Node<Node<Key,Value>,Node<Key,Value>>* nodeToRemove = treeOfPointers.getFirstNode();
-        mergedArray[i] = *(treeOfPointers.remove(nodeToRemove->key));
-        nodeToRemove++;
-        treeOfPointers.insert(*nodeToRemove->value, nodeToRemove->value);
-    }
+        mergedArray[i] = *(treeOfPointers.removeNode(treeOfPointers.getRoot(),nodeToRemove->key)->value);
+        t1_array++;
+        treeOfPointers.insert(*t1_array, t1_array);
+
+    }*/
+
+
+        int i = 0, j = 0, k = 0;
+
+        // Traverse both array
+        while (i<t1_size && j <t2_size)
+        {
+            // Check if current element of first
+            // array is smaller than current element
+            // of second array. If yes, store first
+            // array element and increment first array
+            // index. Otherwise do same with second array
+            if (t1_array[i] < t2_array[j])
+                mergedArray[k++] = t1_array[i++];
+            else
+                mergedArray[k++] = t2_array[j++];
+        }
+
+        // Store remaining elements of first array
+        while (i < t1_size)
+            mergedArray[k++] = t1_array[i++];
+
+        // Store remaining elements of second array
+        while (j < t2_size)
+            mergedArray[k++] = t2_array[j++];
+
+
 
 }
 #endif //wet_1_NODE_H

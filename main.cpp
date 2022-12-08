@@ -47,7 +47,7 @@ int main() {
     cout<< "\ntop scorer:"<<*t1->getTopScorerPlayer();
 */
     Tree<int,int> tree1;
-    int a = 0, b= 1, c = 2, d= 3, e= 4, f= 5, g = 6, h= 7;
+    int a = 40, b= 32, c = 2, d= 8, e= 80, f= 70, g = 6, h= 777;
     tree1.insert(a, &a);
     tree1.insert(b, &b);
     tree1.insert(c, &c);
@@ -63,6 +63,8 @@ int main() {
 
     Tree<int,int>* tree3 = mergeTrees(tree1,tree2);
 
-    //cout << tree3;
+    tree3->print();
+
+    tree2.deleteTree(false);
     return 0;
 }

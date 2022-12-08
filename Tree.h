@@ -30,22 +30,19 @@ class Tree
 {
     private:
     Node<Key,Value>* root;
-public:
-    Node<Key, Value> *getRoot() const {
-        return root;
-    }
-
-private:
     int size;
-
-    public:
+public:
     Tree():
     root(NULL), size(INITIAL_SIZE_OF_TREE) {}
     Tree(Node<Key,Value>* root, int size):
     root(root), size(size) {}
-    ~Tree() = default;
+    virtual ~Tree();
+    void deleteTree(bool deleteValues);
+    void deleteTreeNodes(Node<Key,Value>* node, bool deleteValues);
     Tree& operator=(const Tree& t) = delete;
-
+    Node<Key, Value> *getRoot() const {
+        return root;
+    }
 
     //built-in functions
 
@@ -65,7 +62,7 @@ private:
 
 
     Node<Key,Value>* convertTreeToArray(const Node<Key,Value>* currentNode, Node<Key,Value>* nodesArray, int& currentNodeIndex);
-    Tree<Key,Value> sortArrayToTree(Node<Key,Value>* array, int newTreeSize, int start, int end);
+    Tree<Key,Value> sortArrayToTree(Node<Key,Value>* array, int newTreeSize, int start, int end, int arraySize, Node<Key,Value>* parent);
     Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2);
     //Key getClosest(Key key);
 
@@ -108,7 +105,31 @@ private:
     }
 
 };
+template<class Key, class Value>
+Tree<Key,Value>::~Tree()
+{
+    deleteTree(true);
+}
+template<class Key, class Value>
+void Tree<Key,Value>::deleteTree(bool deleteValues)
+{
+    deleteTreeNodes(root, deleteValues);
+}
+template<class Key, class Value>
+void Tree<Key,Value>::deleteTreeNodes(Node<Key,Value>* node, bool deleteValues)
+{
+    if(node->right)
+    {
+        deleteTreeNodes(node->right, deleteValues);
+    }
+    if(node->left)
+    {
+        deleteTreeNodes(node->left, deleteValues);
+    }
 
+    if(deleteValues) delete node->value;
+    delete node;
+}
 template<class Key, class Value>
 void Tree<Key,Value>::insert(const Key key, Value* value)
 {
@@ -469,62 +490,60 @@ void convertTreeToArray(const Node<Key,Value>* currentNode, Node<Key,Value>* nod
 
 
 template<class Key, class Value>
-Node<Key,Value>* sortArrayToTree(Node<Key,Value>* array, int start, int end)
+Node<Key,Value>* sortArrayToTree(Node<Key,Value>* array, int start, int end, int arraySize, Node<Key,Value>* parent)
 {
     if(start > end)
     {
         return nullptr;
     }
     int middle = (start + end)/2;
-    Node<Key,Value>* subRoot = new Node<Key,Value>(array[middle]);
-    subRoot->parent = array;
-    if(middle == start)
+    Node<Key,Value>* subRoot = array+middle; //allocation!
+    if(parent == array)
+    {
+        subRoot->parent = nullptr;
+    }
+    else
+    {
+        subRoot->parent = parent; //parent!
+    }
+    if(middle==0)
     {
         subRoot->prev = nullptr;
     }
     else
     {
-        subRoot->prev = subRoot-1;
+        subRoot->prev = array+middle-1;
     }
-    if(middle == end)
+    if(middle==arraySize-1)
     {
         subRoot->next = nullptr;
     }
     else
     {
-        subRoot->next = subRoot+1;
+        subRoot->next = array+middle+1;
     }
-    subRoot->left = sortArrayToTree(array, start, middle-1);
-    subRoot->right = sortArrayToTree(array, middle+1, end);
+    subRoot->left = sortArrayToTree(array, start, middle-1, arraySize, subRoot);
+    subRoot->right = sortArrayToTree(array, middle+1, end, arraySize, subRoot);
+    return subRoot;
 }
 
 
 template<class Key, class Value>
 Tree<Key,Value>* mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2)
 {
-    try
-    {
-        Node<Key,Value>* t1_array = new Node<Key,Value>[t1.getSize()];
-        Node<Key,Value>* t2_array = new Node<Key,Value>[t2.getSize()];
-        Node<Key,Value>* mergedArray = new Node<Key,Value>[t1.getSize()+t2.getSize()];
-        int currentNodeIndex = 0;
-        convertTreeToArray(t1.getRoot(), t1_array, currentNodeIndex);
-        currentNodeIndex = 0;
-        convertTreeToArray(t2.getRoot(), t2_array, currentNodeIndex);
-        mergeSortWithAVLTree(mergedArray, t1.getSize()+t2.getSize(), t1_array, t2_array);
-
-        int start = 0, end = t1.getSize()+t2.getSize() -1;
-        sortArrayToTree(mergedArray, start, end), t1.getSize()+t2.getSize();
-        return new Tree<Key,Value>(mergedArray, t1.getSize()+t2.getSize());
-    }
-    catch(std::bad_alloc& e)
-    {
-        e.what();
-    }
-    catch(std::invalid_argument& e)
-    {
-        e.what();
-    }
+    Node<Key,Value>* t1_array = new Node<Key,Value>[t1.getSize()];
+    Node<Key,Value>* t2_array = new Node<Key,Value>[t2.getSize()];
+    Node<Key,Value>* mergedArray = new Node<Key,Value>[t1.getSize()+t2.getSize()];
+    int currentNodeIndex = 0;
+    convertTreeToArray(t1.getRoot(), t1_array, currentNodeIndex);
+    currentNodeIndex = 0;
+    convertTreeToArray(t2.getRoot(), t2_array, currentNodeIndex);
+    mergeSortWithAVLTree(mergedArray, t1.getSize(),t2.getSize(), t1_array, t2_array);
+    delete[] t1_array;
+    delete[] t2_array;
+    int start = 0, end = t1.getSize()+t2.getSize() -1;
+    Node<Key,Value>* subRoot = sortArrayToTree(mergedArray, start, end,t1.getSize()+t2.getSize(),mergedArray);
+    return new Tree<Key,Value>(subRoot, t1.getSize()+t2.getSize());
 }
 
 #endif //HW1_TREE_H
