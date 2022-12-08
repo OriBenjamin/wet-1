@@ -63,7 +63,7 @@ public:
     void connectSonParent(Node<Key, Value> *currentNode,Node<Key, Value> *son);
 
 
-    Node<Key,Value>* convertTreeToArray(const Node<Key,Value>* currentNode, Node<Key,Value>** nodesArray, int& currentNodeIndex);
+    Node<Key,Value>* convertTreeToArray(const Node<Key,Value>* currentNode, Node<Key,Value>* nodesArray, int& currentNodeIndex);
     Tree<Key,Value> sortArrayToTree(Node<Key,Value>* array, int newTreeSize, int start, int end, int arraySize, Node<Key,Value>* parent);
     Tree<Key,Value>* mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2);
     //Key getClosest(Key key);
@@ -489,14 +489,14 @@ Value* Tree<Key,Value>::getLastNode()
 
 
 template<class Key, class Value>
-void convertTreeToArray(Node<Key,Value>* currentNode, Node<Key,Value>** nodesArray, int& currentNodeIndex)
+void convertTreeToArray(const Node<Key,Value>* currentNode, Node<Key,Value>* nodesArray, int& currentNodeIndex)
 {
     if(currentNode == NULL)
     {
         return;
     }
     convertTreeToArray(currentNode->left, nodesArray, currentNodeIndex);
-    nodesArray[currentNodeIndex++] = currentNode;
+    nodesArray[currentNodeIndex++] = *currentNode;
     convertTreeToArray(currentNode->right, nodesArray, currentNodeIndex);
 }
 
@@ -509,8 +509,8 @@ Node<Key,Value>* sortArrayToTree(Node<Key,Value>* array, int start, int end, int
         return nullptr;
     }
     int middle = (start + end)/2;
-    Node<Key,Value>* subRoot = (array+middle); //allocation!
-    if(parent == *array)
+    Node<Key,Value>* subRoot = array+middle; //allocation!
+    if(parent == array)
     {
         subRoot->parent = nullptr;
     }
@@ -524,7 +524,7 @@ Node<Key,Value>* sortArrayToTree(Node<Key,Value>* array, int start, int end, int
     }
     else
     {
-        subRoot->prev = *(array+middle-1);
+        subRoot->prev = array+middle-1;
     }
     if(middle==arraySize-1)
     {
@@ -532,7 +532,7 @@ Node<Key,Value>* sortArrayToTree(Node<Key,Value>* array, int start, int end, int
     }
     else
     {
-        subRoot->next = *(array+middle+1);
+        subRoot->next = array+middle+1;
     }
     subRoot->left = sortArrayToTree(array, start, middle-1, arraySize, subRoot);
     subRoot->right = sortArrayToTree(array, middle+1, end, arraySize, subRoot);
@@ -541,7 +541,7 @@ Node<Key,Value>* sortArrayToTree(Node<Key,Value>* array, int start, int end, int
 
 
 template<class Key, class Value>
-Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2)
+Tree<Key,Value>* mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2)
 {
     Node<Key,Value>* t1_array = new Node<Key,Value>[t1.getSize()];
     Node<Key,Value>* t2_array = new Node<Key,Value>[t2.getSize()];
@@ -554,8 +554,8 @@ Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2)
     delete[] t1_array;
     delete[] t2_array;
     int start = 0, end = t1.getSize()+t2.getSize() -1;
-    Node<Key,Value>* subRoot = sortArrayToTree(mergedArray, start, end,t1.getSize()+t2.getSize(),mergedArray[0]);
-    return Tree<Key,Value>(subRoot, t1.getSize()+t2.getSize());
+    Node<Key,Value>* subRoot = sortArrayToTree(mergedArray, start, end,t1.getSize()+t2.getSize(),mergedArray);
+    return new Tree<Key,Value>(subRoot, t1.getSize()+t2.getSize());
 }
 
 #endif //HW1_TREE_H

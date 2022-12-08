@@ -68,15 +68,15 @@ int main() {
 
     cout << tree1 <<"\n" << tree2;
 
-    Tree<int,int> tree3 = mergeTrees(tree1,tree2);
+    Tree<int,int>* tree3 = mergeTrees(tree1,tree2);
     //Tree<int,int> t3 = *tree3;
     //delete tree3;
   //  tree3->print();
 
     tree2.deleteTree(false);
     tree1.deleteTree(false);
-    //tree3.deleteTree(true);
+    //tree3->deleteTree(false);
 cout<<"hi";
-
+delete tree3;
     return 0;
 }
