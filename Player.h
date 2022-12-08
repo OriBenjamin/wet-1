@@ -36,6 +36,7 @@ public:
 
     //const getters
     int getPlayerId() const {return this->playerId;}
+    int& getPlayerIdRef() {return this->playerId;}
     int getPlayerGamesPlayed() const {return this->gamesPlayed;}
     int getPlayerGoals() const {return this->goals;}
     int getPlayerCardsReceived() const {return this->cardsReceived;}

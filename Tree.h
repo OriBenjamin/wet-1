@@ -35,7 +35,9 @@ public:
     Tree():
     root(NULL), size(INITIAL_SIZE_OF_TREE) {}
     Tree(Node<Key,Value>* root, int size):
-    root(root), size(size) {}
+            root(root), size(size) {}
+    Tree(const Tree<Key,Value>& tree):
+            root(tree.root), size(tree.size) {}
     virtual ~Tree();
     void deleteTree(bool deleteValues);
     void deleteTreeNodes(Node<Key,Value>* node, bool deleteValues);
@@ -63,7 +65,7 @@ public:
 
     Node<Key,Value>* convertTreeToArray(const Node<Key,Value>* currentNode, Node<Key,Value>* nodesArray, int& currentNodeIndex);
     Tree<Key,Value> sortArrayToTree(Node<Key,Value>* array, int newTreeSize, int start, int end, int arraySize, Node<Key,Value>* parent);
-    Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2);
+    Tree<Key,Value>* mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2);
     //Key getClosest(Key key);
 
     int getSize() const
@@ -114,6 +116,7 @@ template<class Key, class Value>
 void Tree<Key,Value>::deleteTree(bool deleteValues)
 {
     deleteTreeNodes(root, deleteValues);
+    root = nullptr;
 }
 template<class Key, class Value>
 void Tree<Key,Value>::deleteTreeNodes(Node<Key,Value>* node, bool deleteValues)
@@ -122,10 +125,12 @@ void Tree<Key,Value>::deleteTreeNodes(Node<Key,Value>* node, bool deleteValues)
     if(node->right)
     {
         deleteTreeNodes(node->right, deleteValues);
+        node->right = nullptr;
     }
     if(node->left)
     {
         deleteTreeNodes(node->left, deleteValues);
+        node->left = nullptr;
     }
 
     if(deleteValues)

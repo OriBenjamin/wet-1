@@ -47,24 +47,36 @@ int main() {
     cout<< "\ntop scorer:"<<*t1->getTopScorerPlayer();
 */
     Tree<int,int> tree1;
-    int a = 40, b= 32, c = 2, d= 8, e= 80, f= 70, g = 6, h= 777;
-    tree1.insert(a, &a);
-    tree1.insert(b, &b);
-    tree1.insert(c, &c);
-    tree1.insert(d, &d);
+    int* a = new int(40);
+    int* b= new int(32);
+    int* c = new int(2);
+    int* d=  new int(8);
+    int* e=  new int(80);
+    int* f=  new int(70);
+    int* g = new int( 6);
+    int* h=  new int(777);
+    tree1.insert(*a, a);
+    tree1.insert(*b, b);
+    tree1.insert(*c, c);
+    tree1.insert(*d, d);
 
     Tree<int,int> tree2;
-    tree2.insert(e,&e);
-    tree2.insert(f, &f);
-    tree2.insert(g, &g);
-    tree2.insert(h, &h);
+    tree2.insert(*e,e);
+    tree2.insert(*f, f);
+    tree2.insert(*g, g);
+    tree2.insert(*h, h);
 
     cout << tree1 <<"\n" << tree2;
 
     Tree<int,int>* tree3 = mergeTrees(tree1,tree2);
-
-    tree3->print();
+    //Tree<int,int> t3 = *tree3;
+    //delete tree3;
+  //  tree3->print();
 
     tree2.deleteTree(false);
+    tree1.deleteTree(false);
+    //tree3->deleteTree(false);
+cout<<"hi";
+delete tree3;
     return 0;
 }

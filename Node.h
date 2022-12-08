@@ -33,12 +33,12 @@ class Node
 
 template<class Key, class Value>
 Node<Key,Value>::Node():
-        right(nullptr), left(nullptr), prev(nullptr), next(nullptr), parent(nullptr),
-        key(NULL), value(nullptr), height(INITIAL_HEIGHT){}
-
+        right(nullptr), left(nullptr), parent(nullptr), next(nullptr), prev(nullptr),
+        key(), value(nullptr), height(INITIAL_HEIGHT){}
+//no default!
 template<class Key, class Value>
 Node<Key,Value>::Node(const Key& key, Value* value):
-        right(nullptr), left(nullptr), prev(nullptr), next(nullptr), parent(nullptr),
+        right(nullptr), left(nullptr), parent(nullptr), next(nullptr), prev(nullptr),
         key(key), value(value), height(INITIAL_HEIGHT){}
 
 template<class Key, class Value>
