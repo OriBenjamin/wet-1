@@ -118,6 +118,7 @@ void Tree<Key,Value>::deleteTree(bool deleteValues)
 template<class Key, class Value>
 void Tree<Key,Value>::deleteTreeNodes(Node<Key,Value>* node, bool deleteValues)
 {
+    if(!node) return;
     if(node->right)
     {
         deleteTreeNodes(node->right, deleteValues);
@@ -127,8 +128,13 @@ void Tree<Key,Value>::deleteTreeNodes(Node<Key,Value>* node, bool deleteValues)
         deleteTreeNodes(node->left, deleteValues);
     }
 
-    if(deleteValues) delete node->value;
+    if(deleteValues)
+    {
+        delete node->value;
+        node->value = nullptr;
+    }
     delete node;
+    node = nullptr;
 }
 template<class Key, class Value>
 void Tree<Key,Value>::insert(const Key key, Value* value)
@@ -325,6 +331,7 @@ Value* Tree<Key,Value>::remove(const Key key)
     Node<Key,Value>* removedNode = removeNode(root, key);
     Value* val = removedNode->value;
     delete removedNode;
+    removedNode = nullptr;
     this->size++;
     return val;
 }
