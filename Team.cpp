@@ -7,7 +7,7 @@
 
 Team::Team(int teamId, int points, int goalsSum, int cardsSum, int teamGamesPlayed,
            int goalKeepers, const Player* topScorerPlayer):
-           teamId(teamId), points(points), players(), playersByStatistics(), topScorerPlayer(nullptr)
+           teamId(teamId), points(points), topScorerPlayer(nullptr), players(), playersByStatistics()
 {
     if(teamId<=0 || points<0)
     {
