@@ -28,6 +28,11 @@ class Node
     Node& operator=(const Node& n) = default;
     bool operator<(const Node<Key,Value>& node) const;
 
+    friend std::ostream &operator<<(std::ostream &os, const Node &node) {
+        os << "right: " << node.right << " left: " << node.left << " key: " << node.key;
+        return os;
+    }
+
 };
 
 
@@ -73,7 +78,7 @@ bool operator>(const Node<Key,Value>& node1, const Node<Key,Value>& node2)
 }
 
 template<class Key, class Value>
-void mergeSortWithAVLTree(Node<Key,Value>* mergedArray, int t1_size, int t2_size, Node<Key,Value>* t1_array, Node<Key,Value>* t2_array)
+void mergeSortWithAVLTree(Node<Key,Value>** mergedArray, int t1_size, int t2_size, Node<Key,Value>** t1_array, Node<Key,Value>** t2_array)
 {
    /* if(mergedArray == nullptr || t1_array == nullptr || t1_array == nullptr || mergedArraySize < 1)
     {
@@ -102,7 +107,7 @@ void mergeSortWithAVLTree(Node<Key,Value>* mergedArray, int t1_size, int t2_size
             // of second array. If yes, store first
             // array element and increment first array
             // index. Otherwise do same with second array
-            if (t1_array[i] < t2_array[j])
+            if (*t1_array[i] < *t2_array[j])
                 mergedArray[k++] = t1_array[i++];
             else
                 mergedArray[k++] = t2_array[j++];

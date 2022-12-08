@@ -70,13 +70,15 @@ int main() {
 
     Tree<int,int>* tree3 = mergeTrees(tree1,tree2);
     //Tree<int,int> t3 = *tree3;
-    //delete tree3;
-  //  tree3->print();
 
+    tree3->print();
+    //cout << tree3[0];
+ //   delete tree3;
     tree2.deleteTree(false);
     tree1.deleteTree(false);
     //tree3->deleteTree(false);
-cout<<"hi";
-delete tree3;
+
+//delete[] tree3;
+
     return 0;
 }
