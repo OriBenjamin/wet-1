@@ -75,7 +75,7 @@ int main() {
 
     tree2.deleteTree(false);
     tree1.deleteTree(false);
-    tree3.deleteTree(true);
+    //tree3.deleteTree(true);
 cout<<"hi";
 
     return 0;

@@ -502,14 +502,14 @@ void convertTreeToArray(Node<Key,Value>* currentNode, Node<Key,Value>** nodesArr
 
 
 template<class Key, class Value>
-Node<Key,Value>* sortArrayToTree(Node<Key,Value>** array, int start, int end, int arraySize, Node<Key,Value>* parent)
+Node<Key,Value>* sortArrayToTree(Node<Key,Value>* array, int start, int end, int arraySize, Node<Key,Value>* parent)
 {
     if(start > end)
     {
         return nullptr;
     }
     int middle = (start + end)/2;
-    Node<Key,Value>* subRoot = *(array+middle); //allocation!
+    Node<Key,Value>* subRoot = (array+middle); //allocation!
     if(parent == *array)
     {
         subRoot->parent = nullptr;
@@ -543,9 +543,9 @@ Node<Key,Value>* sortArrayToTree(Node<Key,Value>** array, int start, int end, in
 template<class Key, class Value>
 Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2)
 {
-    Node<Key,Value>* *t1_array = new Node<Key,Value>*[t1.getSize()];
-    Node<Key,Value>* *t2_array = new Node<Key,Value>*[t2.getSize()];
-    Node<Key,Value>* *mergedArray = new Node<Key,Value>*[t1.getSize()+t2.getSize()];
+    Node<Key,Value>* t1_array = new Node<Key,Value>[t1.getSize()];
+    Node<Key,Value>* t2_array = new Node<Key,Value>[t2.getSize()];
+    Node<Key,Value>* mergedArray = new Node<Key,Value>[t1.getSize()+t2.getSize()];
     int currentNodeIndex = 0;
     convertTreeToArray(t1.getRoot(), t1_array, currentNodeIndex);
     currentNodeIndex = 0;
