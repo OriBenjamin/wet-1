@@ -73,7 +73,7 @@ bool operator>(const Node<Key,Value>& node1, const Node<Key,Value>& node2)
 }
 
 template<class Key, class Value>
-void mergeSortWithAVLTree(Node<Key,Value>* mergedArray, int t1_size, int t2_size, Node<Key,Value>* t1_array, Node<Key,Value>* t2_array)
+void mergeSortWithAVLTree(Node<Key,Value>** mergedArray, int t1_size, int t2_size, Node<Key,Value>** t1_array, Node<Key,Value>** t2_array)
 {
    /* if(mergedArray == nullptr || t1_array == nullptr || t1_array == nullptr || mergedArraySize < 1)
     {
