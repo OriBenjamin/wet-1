@@ -12,7 +12,6 @@
 #include <stdexcept>
 
 const int INITIAL_SIZE_OF_TREE = 0;
-const int INITIAL_INDEX_OF_ARRAY = 0;
 
 class NodeAlreadyExist : public std::exception
 {
@@ -31,7 +30,8 @@ class Tree
     private:
     Node<Key,Value>* root;
     int size;
-public:
+
+    public:
     Tree():
     root(NULL), size(INITIAL_SIZE_OF_TREE) {}
     Tree(Node<Key,Value>* root, int size):
@@ -42,24 +42,25 @@ public:
     void deleteTree(bool deleteValues);
     void deleteTreeNodes(Node<Key,Value>* node, bool deleteValues);
     Tree& operator=(const Tree& t) = delete;
-    Node<Key, Value> *getRoot() const {
-        return root;
-    }
+
+    //const getters
+    Node<Key, Value> *getRoot() const {return root;}
+    int getSize() const {return size;}
+
 
     //built-in functions
-
     Node<Key,Value>* insertNode(Node<Key,Value>* currentNode,Node<Key,Value>* nodeForInsertion);
     void insert(const Key key, Value* value);
 
     Value* remove(const Key key);
     Node<Key,Value>* removeNode(Node<Key,Value>* currentNode, const Key key);
 
-    Value* find(Key key);
-    Node<Key,Value>* findNode(Node<Key,Value>* currentNode, const Key key);
-    Node<Key,Value>* getFirstNode();
-    Value* getLastNode();
+    Value* find(const Key& key) const;
+    Node<Key,Value>* findNode(Node<Key,Value>* currentNode, const Key key) const;
+    Node<Key,Value>* getFirstNode() const;
+    Value* getLastNodeValue() const;
 
-    int getBalanceFactor(const Node<Key,Value>* node);
+    int getBalanceFactor(const Node<Key,Value>* node) const;
     void connectSonParent(Node<Key, Value> *currentNode,Node<Key, Value> *son);
 
 
@@ -68,36 +69,30 @@ public:
     Tree<Key,Value>* mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2);
     //Key getClosest(Key key);
 
-    int getSize() const
-    {
-        return size;
-    }
 
 
+    //what is that
+    void updateHeight(Node<Key,Value>* node);
     Node<Key, Value> *getRotated(Node<Key, Value> *currentNode, int rightChildBalanceFactor,
                                  int leftChildBalanceFactor, int balanceFactor);
+
+    //Key getClosest(Key key);
+
+
+
+    //what is that
     void print() const
     {
         printNode(root);
         //cout << *root->value;
     }
-
+    //what is that
     void printNode(Node<Key,Value>* node) const//also... if yes move outside class
     {
         if(node == nullptr) return;
         printNode(node->left);
         std::cout << *node->value<<", ";
         printNode(node->right);
-    }
-
-    void updateHeight(Node<Key,Value>* node)
-    {
-        if(node != nullptr)
-        {
-            int leftHeight = (node->left) ? node->left->height : -1;
-            int rightHeight = (node->right) ? node->right->height : -1;
-            node->height = (leftHeight >= rightHeight) ? (leftHeight + 1) : (rightHeight + 1);
-        }
     }
 
     //what is that
@@ -107,17 +102,21 @@ public:
     }
 
 };
+
+
 template<class Key, class Value>
 Tree<Key,Value>::~Tree()
 {
     deleteTree(true);
 }
+
 template<class Key, class Value>
 void Tree<Key,Value>::deleteTree(bool deleteValues)
 {
     deleteTreeNodes(root, deleteValues);
     root = nullptr;
 }
+
 template<class Key, class Value>
 void Tree<Key,Value>::deleteTreeNodes(Node<Key,Value>* node, bool deleteValues)
 {
@@ -162,7 +161,7 @@ void Tree<Key,Value>::insert(const Key key, Value* value)
 }
 
 template<class Key, class Value>
-int Tree<Key,Value>::getBalanceFactor(const Node<Key,Value>* node)
+int Tree<Key,Value>::getBalanceFactor(const Node<Key,Value>* node) const
 {
     if (node == nullptr) return 0;
     int leftHeight = (node->left) ? node->left->height : -1;
@@ -173,37 +172,36 @@ int Tree<Key,Value>::getBalanceFactor(const Node<Key,Value>* node)
 template<class Key, class Value>
 Node<Key,Value>* Tree<Key,Value>::insertNode(Node<Key,Value>* currentNode, Node<Key,Value>* nodeForInsertion)
 {
-        if(currentNode == nullptr)
+    if(currentNode == nullptr)
+    {
+        return nodeForInsertion;
+    }
+    if(nodeForInsertion->key == currentNode->key)
+    {
+        throw NodeAlreadyExist();
+    }
+    else if(nodeForInsertion->key < currentNode->key)
+    {
+        if(!nodeForInsertion->next || nodeForInsertion->next->key > currentNode->key)
         {
-            return nodeForInsertion;
+            nodeForInsertion->next = currentNode;
         }
-        if(nodeForInsertion->key == currentNode->key)
+        currentNode->left = insertNode(currentNode->left, nodeForInsertion);
+        currentNode->left->parent = currentNode;
+    }
+    else
+    {
+        if(!nodeForInsertion->prev || nodeForInsertion->prev->key < currentNode->key)
         {
-            throw NodeAlreadyExist();
+            nodeForInsertion->prev = currentNode;
         }
-        else if(nodeForInsertion->key < currentNode->key)
-        {
-            if(!nodeForInsertion->next || nodeForInsertion->next->key > currentNode->key)
-            {
-                nodeForInsertion->next = currentNode;
-            }
-            currentNode->left = insertNode(currentNode->left, nodeForInsertion);
-            currentNode->left->parent = currentNode;
-        }
-        else
-        {
-            if(!nodeForInsertion->prev || nodeForInsertion->prev->key < currentNode->key)
-            {
-                nodeForInsertion->prev = currentNode;
-            }
-            currentNode->right = insertNode(currentNode->right, nodeForInsertion);
-            currentNode->right->parent = currentNode;
-        }
-        updateHeight(currentNode);
-
-        int rightChildBalanceFactor = getBalanceFactor(currentNode->right);
-        int leftChildBalanceFactor = getBalanceFactor(currentNode->left);
-        int balanceFactor = getBalanceFactor(currentNode);
+        currentNode->right = insertNode(currentNode->right, nodeForInsertion);
+        currentNode->right->parent = currentNode;
+    }
+    updateHeight(currentNode);
+    int rightChildBalanceFactor = getBalanceFactor(currentNode->right);
+    int leftChildBalanceFactor = getBalanceFactor(currentNode->left);
+    int balanceFactor = getBalanceFactor(currentNode);
     return getRotated(currentNode, rightChildBalanceFactor, leftChildBalanceFactor, balanceFactor);
 
 }
@@ -429,13 +427,13 @@ void Tree<Key,Value>::connectSonParent(Node<Key, Value> *currentNode,Node<Key, V
 }
 
 template<class Key, class Value>
-Value* Tree<Key,Value>::find(const Key key)
+Value* Tree<Key,Value>::find(const Key& key) const
 {
     return findNode(root, key)->value;
 }
 
 template<class Key, class Value>
-Node<Key,Value>* Tree<Key,Value>::findNode(Node<Key,Value>* currentNode, Key key)
+Node<Key,Value>* Tree<Key,Value>::findNode(Node<Key,Value>* currentNode, Key key) const
 {
     if(currentNode == nullptr)
     {
@@ -457,7 +455,17 @@ Node<Key,Value>* Tree<Key,Value>::findNode(Node<Key,Value>* currentNode, Key key
 }
 
 template<class Key, class Value>
-Node<Key,Value>* Tree<Key,Value>::getFirstNode()
+void updateHeight(Node<Key,Value>* node)
+{
+    if(node != nullptr)
+    {
+        int leftHeight = (node->left) ? node->left->height : -1;
+        int rightHeight = (node->right) ? node->right->height : -1;
+        node->height = (leftHeight >= rightHeight) ? (leftHeight + 1) : (rightHeight + 1);
+    }
+}
+template<class Key, class Value>
+Node<Key,Value>* Tree<Key,Value>::getFirstNode() const
 {
     Node<Key,Value>* currentNode = root;
     if(currentNode == nullptr)
@@ -472,7 +480,7 @@ Node<Key,Value>* Tree<Key,Value>::getFirstNode()
 }
 
 template<class Key, class Value>
-Value* Tree<Key,Value>::getLastNode()
+Value* Tree<Key,Value>::getLastNodeValue() const
 {
     Node<Key,Value>* currentNode = root;
     if(currentNode == nullptr)
@@ -491,7 +499,7 @@ Value* Tree<Key,Value>::getLastNode()
 template<class Key, class Value>
 void convertTreeToArray(const Node<Key,Value>* currentNode, Node<Key,Value>* nodesArray, int& currentNodeIndex)
 {
-    if(currentNode == NULL)
+    if(currentNode == nullptr)
     {
         return;
     }

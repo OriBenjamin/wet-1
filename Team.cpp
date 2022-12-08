@@ -26,11 +26,7 @@ void Team::insertPlayer(Player& player)
     {
         topScorerPlayer = &player;
     }
-    else if(player.getPlayerGoals() > topScorerPlayer->getPlayerGoals())
-    {
-        topScorerPlayer = &player;
-        //topScorerPlayer->getPlayerId() = player.getPlayerId();
-    }
+    topScorerPlayer = playersByStatistics.getLastNode();
     if(player.getPlayerCanBeGooalkeeper())
     {
         goalKeepers++;

@@ -81,9 +81,6 @@ std::ostream &operator<<(std::ostream &os, const Player &player) {
     return os;
 }
 
-Team *Player::getTeam() const {
-    return team;
-}
 
 void Player::setGamesPlayed(int gamesPlayed) {
     Player::gamesPlayed = gamesPlayed;

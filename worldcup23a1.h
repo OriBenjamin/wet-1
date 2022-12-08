@@ -26,7 +26,7 @@ class world_cup_t
     Tree<int,Team> teams;
     Tree<int,Player> playersById;
     Tree<Player&,Player> playersByStatistics;
-    Tree<int,Team> knockoutTeams;
+    Tree<int,Team*> knockoutTeams;
     Player* topScorerPlayer;
 
     public:

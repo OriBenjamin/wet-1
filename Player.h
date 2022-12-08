@@ -41,16 +41,16 @@ public:
     int getPlayerGoals() const {return this->goals;}
     int getPlayerCardsReceived() const {return this->cardsReceived;}
     bool getPlayerCanBeGooalkeeper() const {return this->canBeGoalkeeper;}
-    Team *getTeam() const;
+    Team *getTeam() const {return team;}
 
     //getters
     int& getPlayerId() {return this->playerId;}
 
-    friend std::ostream &operator<<(std::ostream &os, const Player &player);
+    /*friend std::ostream &operator<<(std::ostream &os, const Player &player);
 
     void setGamesPlayed(int gamesPlayed);
     void setGoals(int goals);
-    void setCardsReceived(int cardsReceived);
+    void setCardsReceived(int cardsReceived);*/
 };
 
 bool operator>(const Player& player1, const Player& player2);

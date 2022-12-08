@@ -33,6 +33,8 @@ class Node
         return os;
     }
 
+    //const getters
+    Key getKey() const;
 };
 
 
@@ -123,5 +125,12 @@ void mergeSortWithAVLTree(Node<Key,Value>** mergedArray, int t1_size, int t2_siz
 
 
 
+}
+
+
+template<class Key, class Value>
+Key Node<Key, Value>::getKey() const
+{
+    return key;
 }
 #endif //wet_1_NODE_H
