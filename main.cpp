@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Tree.h"
 #include "Player.h"
+#include "worldcup23a1.h"
 using namespace std;
 
 int main() {
@@ -80,5 +81,11 @@ int main() {
 
 //delete[] tree3;
 
+
+    world_cup_t worldCup2022;
+    worldCup2022.add_team(213,2);
+    cout << "\nteam 1: " << worldCup2022.teams;
+    worldCup2022.add_player(1,213,1,3,4,true);
+    cout << "\nteam 1: " << worldCup2022.teams;
     return 0;
 }

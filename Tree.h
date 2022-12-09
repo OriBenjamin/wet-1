@@ -539,6 +539,7 @@ Node<Key,Value>* sortArrayToTree(Node<Key,Value>** array, int start, int end, in
     }
     subRoot->left = sortArrayToTree(array, start, middle-1, arraySize, subRoot);
     subRoot->right = sortArrayToTree(array, middle+1, end, arraySize, subRoot);
+    updateHeight(subRoot);
     return subRoot;
 }
 
