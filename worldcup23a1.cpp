@@ -16,7 +16,7 @@ StatusType world_cup_t::add_team(int teamId, int points)
     try
     {
         Team *team = new Team(teamId, points);
-        teams.insert(teamId,team);
+        teams.insert(&teamId,team);
     }
     catch(std::invalid_argument& e)
     {
@@ -42,15 +42,15 @@ StatusType world_cup_t::remove_team(int teamId)
     Team* team;
     try
     {
-        team = teams.find(teamId);
+        team = teams.find(&teamId);
         if (team->getSize() != 0)
         {
             return StatusType::FAILURE;
         }
-        team = teams.remove(teamId);
+        team = teams.remove(&teamId);
         delete team;
         team = nullptr;
-        knockoutTeams.remove(teamId);
+        knockoutTeams.remove(&teamId);
     }
     catch (NodeDoesNotExist&)
     {
@@ -69,15 +69,15 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         {
             return StatusType::INVALID_INPUT;
         }
-        Team* team = teams.find(teamId);
+        Team* team = teams.find(&teamId);
         Player* player = new Player(playerId,gamesPlayed,goals,cards,goalKeeper,team);
         team->insertPlayer(*player);
-        playersById.insert(player->getPlayerId(), player);
-        playersByStatistics.insert(*player, player);
+        playersById.insert(&(player->getPlayerId()), player);
+        playersByStatistics.insert(player, player);
         topScorerPlayer =  playersByStatistics.getLastNodeValue();
         if(team->getSize() >= 11 && team->getGoalKeepers() > 0)
         {
-            knockoutTeams.insert(team->getTeamId(), team);
+            knockoutTeams.insert(&(team->getTeamId()), team);
         }
     }
     catch(std::invalid_argument&)
@@ -103,14 +103,14 @@ StatusType world_cup_t::remove_player(int playerId)
         {
             return StatusType::INVALID_INPUT;
         }
-        Player* player = playersById.remove(playerId);
-        playersByStatistics.remove(*player);
+        Player* player = playersById.remove(&playerId);
+        playersByStatistics.remove(player);
         Team* team = player->getTeam();
         team->removePlayer(*player);
         topScorerPlayer = playersByStatistics.getLastNodeValue();
         if(team->getSize() < 11 || team->getGoalKeepers() == 0)
         {
-            knockoutTeams.remove(team->getTeamId());
+            knockoutTeams.remove(&(team->getTeamId()));
         }
         delete player;
         player = nullptr;
@@ -131,14 +131,14 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
     }
     try
     {
-        Player *player = playersById.find(playerId);
-        playersByStatistics.remove(*player);
+        Player *player = playersById.find(&playerId);
+        playersByStatistics.remove(player);
         player->getTeam()->removePlayer(*player);
         player->setGamesPlayed(player->getPlayerGamesPlayed()+gamesPlayed);
         player->setCardsReceived(player->getPlayerCardsReceived()+cardsReceived);
         player->setGoals(player->getPlayerGoals()+scoredGoals);
-        playersById.insert(player->getPlayerId(), player);
-        playersByStatistics.insert(*player,player);
+        playersById.insert(&(player->getPlayerId()), player);
+        playersByStatistics.insert(player,player);
         player->getTeam()->insertPlayer(*player);
     }
     catch (NodeDoesNotExist&)
@@ -155,10 +155,9 @@ StatusType world_cup_t::play_match(int teamId1, int teamId2)
         return StatusType::INVALID_INPUT;
     }
     try {
-        Team* team1 = teams.find(teamId1);
-        Team* team2 = teams.find(teamId2);
-        if(team1->getSize() < 11 || team2->getSize() < 11
-            || team1->getGoalKeepers()<=0 || team2->getGoalKeepers()<=0)
+        Team* team1 = teams.find(&teamId1);
+        Team* team2 = teams.find(&teamId2);
+        if(team1->getSize() < 11 || team2->getSize() < 11 || team1->getGoalKeepers()<=0 || team2->getGoalKeepers()<=0)
         {
            return StatusType::FAILURE;
         }
@@ -195,7 +194,7 @@ output_t<int> world_cup_t::get_num_played_games(int playerId)
     }
     try
     {
-        Player* player = playersById.find(playerId);
+        Player* player = playersById.find(&playerId);
         int totalGames = player->getPlayerGamesPlayed() + (player->getTeam())->getTeamGamesPlayed();
         return *(new output_t<int>(totalGames));
     }
@@ -213,7 +212,7 @@ output_t<int> world_cup_t::get_team_points(int teamId)
     }
     try
     {
-        Team* team = teams.find(teamId);
+        Team* team = teams.find(&teamId);
         return output_t<int>(team->getPoints());
     }
     catch(NodeDoesNotExist& e)
@@ -238,7 +237,7 @@ output_t<int> world_cup_t::get_top_scorer(int teamId)
     {
         if(teamId>0)
         {
-            Team* team = teams.find(teamId);
+            Team* team = teams.find(&teamId);
             if(team->getSize() == 0)
             {
                 return output_t<int>(StatusType::FAILURE);
@@ -270,7 +269,7 @@ output_t<int> world_cup_t::get_all_players_count(int teamId)
     {
         if(teamId>0)
         {
-            Team* team = teams.find(teamId);
+            Team* team = teams.find(&teamId);
             return output_t<int>(team->getSize());
         }
         else
@@ -297,8 +296,8 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
 
         if(teamId>0)
         {
-            Team* team = teams.find(teamId);
-            Node<Player&,Player>** nodesArray = new Node<Player&,Player>*[team->getPlayersByStatistics()->getSize()];
+            Team* team = teams.find(&teamId);
+            Node<Player,Player>** nodesArray = new Node<Player,Player>*[team->getPlayersByStatistics()->getSize()];
             convertTreeToPointersArray(team->getPlayersByStatistics()->getRoot(), nodesArray, index);
             for(int i=0; i<index; i++)
             {
@@ -307,7 +306,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
         }
         else
         {
-            Node<Player&,Player>** nodesArray = new Node<Player&,Player>*[playersByStatistics.getSize()];
+            Node<Player,Player>** nodesArray = new Node<Player,Player>*[playersByStatistics.getSize()];
             convertTreeToPointersArray(playersByStatistics.getRoot(), nodesArray, index);
             for(int i=0; i<index; i++)
             {
