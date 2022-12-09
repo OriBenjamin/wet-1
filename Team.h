@@ -22,7 +22,7 @@ class Team
     private:
     Player* topScorerPlayer;
     Tree<int,Player> players; //sorted by Id
-    Tree<Player&,Player> playersByStatistics;
+    Tree<Player,Player> playersByStatistics;
 
     public:
     Team() = delete;
@@ -38,6 +38,7 @@ class Team
     //const getters
 
     int getTeamId() const {return teamId;}
+    int& getTeamIdRef() {return this->teamId;}
     int getPoints() const {return points;}
     int getGoalSum() const {return goalSum;}
     int getCardSum() const {return cardSum;}
@@ -46,7 +47,7 @@ class Team
     Player *getTopScorerPlayer() const {return topScorerPlayer;}
     int getSize() const {return players.getSize();}
     const Tree<int,Player>* getPlayers() const {return &players;}
-    const Tree<Player&,Player>* getPlayersByStatistics() const {return &playersByStatistics;}
+    const Tree<Player,Player>* getPlayersByStatistics() const {return &playersByStatistics;}
 
 
 

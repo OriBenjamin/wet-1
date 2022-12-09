@@ -56,16 +56,16 @@ int main() {
     int* f=  new int(70);
     int* g = new int( 6);
     int* h=  new int(777);
-    tree1.insert(*a, a);
-    tree1.insert(*b, b);
-    tree1.insert(*c, c);
-    tree1.insert(*d, d);
+    tree1.insert(a, a);
+    tree1.insert(b, b);
+    tree1.insert(c, c);
+    tree1.insert(d, d);
 
     Tree<int,int> tree2;
-    tree2.insert(*e,e);
-    tree2.insert(*f, f);
-    tree2.insert(*g, g);
-    tree2.insert(*h, h);
+    tree2.insert(e,e);
+    tree2.insert(f, f);
+    tree2.insert(g, g);
+    tree2.insert(h, h);
 
     cout << tree1 <<"\n" << tree2;
 
@@ -90,5 +90,6 @@ int main() {
     cout << "\nteam 1: " << worldCup2022.teams;
     worldCup2022.remove_player(1);
     cout << "\nteam 1: " << worldCup2022.teams;
+
     return 0;
 }

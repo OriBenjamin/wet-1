@@ -16,7 +16,7 @@ StatusType world_cup_t::add_team(int teamId, int points)
     try
     {
         Team *team = new Team(teamId, points);
-        teams.insert(&teamId,team);
+        teams.insert(&team->getTeamIdRef(),team);
     }
     catch(std::invalid_argument& e)
     {
@@ -72,12 +72,12 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         Team* team = teams.find(&teamId);
         Player* player = new Player(playerId,gamesPlayed,goals,cards,goalKeeper,team);
         team->insertPlayer(*player);
-        playersById.insert(&(player->getPlayerId()), player);
+        playersById.insert(&(player->getPlayerIdRef()), player);
         playersByStatistics.insert(player, player);
         topScorerPlayer =  playersByStatistics.getLastNodeValue();
         if(team->getSize() >= 11 && team->getGoalKeepers() > 0)
         {
-            knockoutTeams.insert(&(team->getTeamId()), team);
+            knockoutTeams.insert(&team->getTeamIdRef(), team);
         }
     }
     catch(std::invalid_argument&)
@@ -110,7 +110,7 @@ StatusType world_cup_t::remove_player(int playerId)
         topScorerPlayer = playersByStatistics.getLastNodeValue();
         if(team->getSize() < 11 || team->getGoalKeepers() == 0)
         {
-            knockoutTeams.remove(&(team->getTeamId()));
+            knockoutTeams.remove(&(team->getTeamIdRef()));
         }
         delete player;
         player = nullptr;

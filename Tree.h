@@ -50,13 +50,13 @@ class Tree
 
     //built-in functions
     Node<Key,Value>* insertNode(Node<Key,Value>* currentNode,Node<Key,Value>* nodeForInsertion);
-    void insert(const Key key, Value* value);
+    void insert(Key* key, Value* value);
 
-    Value* remove(const Key key);
-    Node<Key,Value>* removeNode(Node<Key,Value>* currentNode, const Key key);
+    Value* remove(Key* key);
+    Node<Key,Value>* removeNode(Node<Key,Value>* currentNode, Key* key);
 
-    Value* find(const Key& key) const;
-    Node<Key,Value>* findNode(Node<Key,Value>* currentNode, const Key key) const;
+    Value* find(Key* key) const;
+    Node<Key,Value>* findNode(Node<Key,Value>* currentNode, Key* key) const;
     Node<Key,Value>* getFirstNode() const;
     Value* getLastNodeValue() const;
 
@@ -150,7 +150,7 @@ void Tree<Key,Value>::deleteTreeNodes(Node<Key,Value>* node, bool deleteValues)
     node = nullptr;
 }
 template<class Key, class Value>
-void Tree<Key,Value>::insert(const Key key, Value* value)
+void Tree<Key,Value>::insert(Key* key, Value* value)
 {
     if(value == nullptr)
     {
@@ -185,13 +185,13 @@ Node<Key,Value>* Tree<Key,Value>::insertNode(Node<Key,Value>* currentNode, Node<
     {
         return nodeForInsertion;
     }
-    if(nodeForInsertion->key == currentNode->key)
+    if(*nodeForInsertion->key == *currentNode->key)
     {
         throw NodeAlreadyExist();
     }
-    else if(nodeForInsertion->key < currentNode->key)
+    else if(*nodeForInsertion->key < *currentNode->key)
     {
-        if(!nodeForInsertion->next || nodeForInsertion->next->key > currentNode->key)
+        if(!nodeForInsertion->next || *nodeForInsertion->next->key > *currentNode->key)
         {
             nodeForInsertion->next = currentNode;
         }
@@ -216,8 +216,7 @@ Node<Key,Value>* Tree<Key,Value>::insertNode(Node<Key,Value>* currentNode, Node<
 }
 
 template<class Key, class Value>
-Node<Key, Value> *
-Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, int rightChildBalanceFactor, int leftChildBalanceFactor,
+Node<Key, Value> * Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, int rightChildBalanceFactor, int leftChildBalanceFactor,
                              int balanceFactor)
  {
     if(balanceFactor == 2 && leftChildBalanceFactor >= 0)
@@ -338,7 +337,7 @@ Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, int rightChildBalanc
 
 
 template<class Key, class Value>
-Value* Tree<Key,Value>::remove(const Key key)
+Value* Tree<Key,Value>::remove(Key* key)
 {
     Node<Key,Value>* removedNode = removeNode(root, key);
     Value* val = removedNode->value;
@@ -349,16 +348,16 @@ Value* Tree<Key,Value>::remove(const Key key)
 }
 
 template<class Key, class Value>
-Node<Key,Value>* Tree<Key,Value>::removeNode(Node<Key, Value> *currentNode, const Key key)
+Node<Key,Value>* Tree<Key,Value>::removeNode(Node<Key, Value> *currentNode, Key* key)
 {
     if(currentNode == nullptr)
     {
         throw NodeDoesNotExist();
     }
     Node<Key, Value>* removedNode = currentNode;
-    if(key == currentNode->key)
+    if(*key == *currentNode->key)
     {
-        if(currentNode->left && !currentNode->right)
+        /*if(currentNode->left && !currentNode->right)
         {
             connectSonParent(currentNode,currentNode->left);
             currentNode = currentNode->parent; //now the root of current tree is the parent
@@ -368,18 +367,28 @@ Node<Key,Value>* Tree<Key,Value>::removeNode(Node<Key, Value> *currentNode, cons
         {
             connectSonParent(currentNode,currentNode->right);
             currentNode = currentNode->parent;
-        }
-        else if(currentNode->right && currentNode->left)
+        }*/
+        if(currentNode->right || currentNode->left)
         {
             //swap
             //cout<<"third";
-            Key currentKey = currentNode->key;
+            if(currentNode->right) {
+            Key* currentKey = currentNode->key;
             Value* currentValue = currentNode->value;
             currentNode->key = currentNode->next->key;
             currentNode->value = currentNode->next->value;
             currentNode->next->key = currentKey;
             currentNode->next->value = currentValue;
-            removedNode = removeNode(currentNode->next,key);
+            removedNode = removeNode(currentNode->next, key);
+            } else {
+                Key* currentKey = currentNode->key;
+                Value* currentValue = currentNode->value;
+                currentNode->key = currentNode->prev->key;
+                currentNode->value = currentNode->prev->value;
+                currentNode->prev->key = currentKey;
+                currentNode->prev->value = currentValue;
+                removedNode = removeNode(currentNode->prev, key);
+            }
         }
         else
         {
@@ -393,7 +402,7 @@ Node<Key,Value>* Tree<Key,Value>::removeNode(Node<Key, Value> *currentNode, cons
             currentNode = currentNode->parent;
         }
     }
-    else if(key < currentNode->key)
+    else if(*key < *currentNode->key)
     {
         removedNode = removeNode(currentNode->left,key);
     }
@@ -436,23 +445,23 @@ void Tree<Key,Value>::connectSonParent(Node<Key, Value> *currentNode,Node<Key, V
 }
 
 template<class Key, class Value>
-Value* Tree<Key,Value>::find(const Key& key) const
+Value* Tree<Key,Value>::find(Key* key) const
 {
     return findNode(root, key)->value;
 }
 
 template<class Key, class Value>
-Node<Key,Value>* Tree<Key,Value>::findNode(Node<Key,Value>* currentNode, Key key) const
+Node<Key,Value>* Tree<Key,Value>::findNode(Node<Key,Value>* currentNode, Key* key) const
 {
     if(currentNode == nullptr)
     {
         throw NodeDoesNotExist();
     }
-    if(currentNode->key == key)
+    if(*currentNode->key == *key)
     {
         return currentNode;
     }
-    else if(key < currentNode->key)
+    else if(*key < *currentNode->key)
     {
         return findNode(currentNode->left, key);
     }

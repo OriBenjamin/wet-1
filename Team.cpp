@@ -18,8 +18,8 @@ Team::Team(int teamId, int points):
 void Team::insertPlayer(Player& player)
 {
 
-    players.insert(player.getPlayerId(), &player);
-    playersByStatistics.insert(player, &player);
+    players.insert(&player.getPlayerIdRef(), &player);
+    playersByStatistics.insert(&player, &player);
     goalSum+=player.getPlayerGoals();
     cardSum+=player.getPlayerCardsReceived();
     if(topScorerPlayer == nullptr)
@@ -35,8 +35,8 @@ void Team::insertPlayer(Player& player)
 
 void Team::removePlayer( Player& player)
 {
-    Player* p = players.remove(player.getPlayerId());
-    playersByStatistics.remove(player);
+    Player* p = players.remove(&player.getPlayerId());
+    playersByStatistics.remove(&player);
     goalSum-=player.getPlayerGoals();
     cardSum-=player.getPlayerCardsReceived();
     topScorerPlayer = playersByStatistics.getLastNodeValue();
