@@ -22,18 +22,18 @@
 
 class world_cup_t
 {
-    private:
+    public:
     Tree<int,Team> teams;
     Tree<int,Player> playersById;
     Tree<Player&,Player> playersByStatistics;
-    Tree<int,Team*> knockoutTeams;
+    Tree<int,Team> knockoutTeams;
     Player* topScorerPlayer;
 
     public:
     // <DO-NOT-MODIFY> {
 
     world_cup_t();
-    virtual ~world_cup_t() = default;
+    virtual ~world_cup_t();
 
     StatusType add_team(int teamId, int points);
 

@@ -5,9 +5,9 @@
 #include "Team.h"
 #include "Player.h"
 
-Team::Team(int teamId, int points, int goalsSum, int cardsSum, int teamGamesPlayed,
-           int goalKeepers, const Player* topScorerPlayer):
-           teamId(teamId), points(points), topScorerPlayer(nullptr), players(), playersByStatistics()
+Team::Team(int teamId, int points):
+           teamId(teamId), points(points), goalSum(0), cardSum(0), teamGamesPlayed(0), goalKeepers(0),
+           topScorerPlayer(nullptr), players(), playersByStatistics()
 {
     if(teamId<=0 || points<0)
     {
@@ -35,7 +35,7 @@ void Team::insertPlayer(Player& player)
 
 void Team::removePlayer( Player& player)
 {
-    players.remove(player.getPlayerId());
+    Player* p = players.remove(player.getPlayerId());
     playersByStatistics.remove(player);
     goalSum-=player.getPlayerGoals();
     cardSum-=player.getPlayerCardsReceived();
@@ -46,10 +46,26 @@ void Team::removePlayer( Player& player)
     }
 }
 
-/*std::ostream &operator<<(std::ostream &os, const Team &team) {
+
+void Team::deleteTeamNodes(bool deleteValues)
+{
+    if(deleteValues)
+    {
+        playersByStatistics.deleteTree(true);
+        players.deleteTree(true);
+    }
+    else
+    {
+        playersByStatistics.deleteTree(false);
+        players.deleteTree(false);
+    }
+}
+
+
+std::ostream &operator<<(std::ostream &os, const Team &team) {
     os << "teamId: " << team.teamId << " players: " << team.players << " playersByStatistics: "
        << team.playersByStatistics;
     return os;
-}*/
+}
 
 

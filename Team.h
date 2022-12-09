@@ -21,20 +21,19 @@ class Team
 
     private:
     Player* topScorerPlayer;
-    Tree<int,Player> players;
+    Tree<int,Player> players; //sorted by Id
     Tree<Player&,Player> playersByStatistics;
 
     public:
     Team() = delete;
-    Team(int teamId, int points, int goalsSum = 0, int cardsSum = 0, int teamGamesPlayed = 0,
-         int goalKeepers = 0, const Player* topScorerPlayer = nullptr);
-    ~Team() = default;
+    Team(int teamId, int points);
+    ~Team() {this->deleteTeamNodes(false);};
     Team(const Team& t) = delete;
     Team& operator=(const Team& t) = delete;
 
     void insertPlayer(Player& player);
     void removePlayer(Player& player);
-
+    void deleteTeamNodes(bool deleteValues);
 
     //const getters
 
@@ -58,7 +57,7 @@ class Team
     void setCardSum(int cardSum) {this->cardSum=cardSum;};
     void setTeamGamesPlayed(int teamGamesPlayed) {this->teamGamesPlayed=teamGamesPlayed;};
 
-    //friend std::ostream &operator<<(std::ostream &os, const Team &team);
+    friend std::ostream &operator<<(std::ostream &os, const Team &team);
 
 };
 

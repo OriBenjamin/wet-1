@@ -3,10 +3,13 @@
 world_cup_t::world_cup_t():
 teams(), playersById(), playersByStatistics(), knockoutTeams(), topScorerPlayer(nullptr) {}
 
-/*world_cup_t::~world_cup_t()
+world_cup_t::~world_cup_t()
 {
-
-}*/
+    knockoutTeams.deleteTree(false);
+    teams.deleteTree(true);
+    playersByStatistics.deleteTree(false);
+    playersById.deleteTree(true);
+}
 
 StatusType world_cup_t::add_team(int teamId, int points)
 {
@@ -46,6 +49,7 @@ StatusType world_cup_t::remove_team(int teamId)
         }
         team = teams.remove(teamId);
         delete team;
+        team = nullptr;
         knockoutTeams.remove(teamId);
     }
     catch (NodeDoesNotExist&)
@@ -73,7 +77,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         topScorerPlayer =  playersByStatistics.getLastNodeValue();
         if(team->getSize() >= 11 && team->getGoalKeepers() > 0)
         {
-            knockoutTeams.insert(team->getTeamId(), &team);
+            knockoutTeams.insert(team->getTeamId(), team);
         }
     }
     catch(std::invalid_argument&)
@@ -109,6 +113,7 @@ StatusType world_cup_t::remove_player(int playerId)
             knockoutTeams.remove(team->getTeamId());
         }
         delete player;
+        player = nullptr;
     }
     catch(NodeDoesNotExist&)
     {
@@ -294,19 +299,19 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
         {
             Team* team = teams.find(teamId);
             Node<Player&,Player>** nodesArray = new Node<Player&,Player>*[team->getPlayersByStatistics()->getSize()];
-            convertTreeToPoinetrsArray(team->getPlayersByStatistics()->getRoot(), nodesArray, index);
+            convertTreeToPointersArray(team->getPlayersByStatistics()->getRoot(), nodesArray, index);
             for(int i=0; i<index; i++)
             {
-                output[i] = nodesArray[i].getKey().getPlayerId();
+                output[i] = nodesArray[i]->getKey().getPlayerId();
             }
         }
         else
         {
             Node<Player&,Player>** nodesArray = new Node<Player&,Player>*[playersByStatistics.getSize()];
-            convertTreeToPoinetrsArray(playersByStatistics.getRoot(), nodesArray, index);
+            convertTreeToPointersArray(playersByStatistics.getRoot(), nodesArray, index);
             for(int i=0; i<index; i++)
             {
-                output[i] = nodesArray[i].getKey().getPlayerId();
+                output[i] = nodesArray[i]->getKey().getPlayerId();
             }
         }
     }

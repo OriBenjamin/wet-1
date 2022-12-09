@@ -343,8 +343,8 @@ Value* Tree<Key,Value>::remove(const Key key)
     Node<Key,Value>* removedNode = removeNode(root, key);
     Value* val = removedNode->value;
     delete removedNode;
-    removedNode = nullptr;
-    this->size++;
+    if(size == 1) {root = nullptr;}
+    this->size--;
     return val;
 }
 
