@@ -23,6 +23,11 @@ class NodeDoesNotExist : public std::exception
     public:
     const char* what() const noexcept override {return "Node does not exist in this tree";}
 };
+class OnlyOneNodeInTree : public std::exception
+{
+public:
+    const char* what() const noexcept override {return "There is only one node in this tree";}
+};
 
 template<class Key, class Value>
 class Tree
@@ -67,7 +72,7 @@ class Tree
     Node<Key,Value>* convertTreeToArray(const Node<Key,Value>* currentNode, Node<Key,Value>* nodesArray, int& currentNodeIndex);
     Tree<Key,Value> sortArrayToTree(Node<Key,Value>** array, int newTreeSize, int start, int end, int arraySize, Node<Key,Value>* parent);
     Tree<Key,Value>* mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2);
-    //Key getClosest(Key key);
+    Key* getClosestKey(Key* key) const;
 
 
 
@@ -102,6 +107,7 @@ class Tree
 
 };
 
+
 template<class Key, class Value>
 void updateHeight(Node<Key,Value>* node)
 {
@@ -111,6 +117,18 @@ void updateHeight(Node<Key,Value>* node)
         int rightHeight = (node->right) ? node->right->height : -1;
         node->height = (leftHeight >= rightHeight) ? (leftHeight + 1) : (rightHeight + 1);
     }
+}
+
+template<class Key, class Value>
+Key* Tree<Key,Value>::getClosestKey(Key* key) const
+{
+    Node<Key,Value>* node = findNode(root, key);
+    if(!node->next && node->prev) return node->prev->key;
+    if(node->next && !node->prev) return node->next->key;
+    if(!node->next && !node->prev) throw OnlyOneNodeInTree();
+    Key* nextNodeKey  = node->next->key;
+    Key* prevNodeKey  = node->prev->key;
+    return (*nextNodeKey > *prevNodeKey) ? nextNodeKey : prevNodeKey;
 }
 
 template<class Key, class Value>

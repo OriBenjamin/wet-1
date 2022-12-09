@@ -87,6 +87,7 @@ int main() {
     cout << "\nteam 1: " << worldCup2022.teams;
     worldCup2022.add_player(1,213,1,3,4,true);
     worldCup2022.add_player(2,213,6,2,4,true);
+    cout << "\nclosest player: " << worldCup2022.get_closest_player(2,213).ans()<<"\n";
     cout << "\nteam 1: " << worldCup2022.teams;
     worldCup2022.remove_player(1);
     cout << "\nteam 1: " << worldCup2022.teams;

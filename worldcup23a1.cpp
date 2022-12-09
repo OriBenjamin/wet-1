@@ -70,7 +70,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
             return StatusType::INVALID_INPUT;
         }
         Team* team = teams.find(&teamId);
-        Player* player = new Player(playerId,gamesPlayed,goals,cards,goalKeeper,team);
+        Player* player = new Player(playerId,gamesPlayed-team->getTeamGamesPlayed(),goals,cards,goalKeeper,team);
         team->insertPlayer(*player);
         playersById.insert(&(player->getPlayerIdRef()), player);
         playersByStatistics.insert(player, player);
@@ -196,7 +196,8 @@ output_t<int> world_cup_t::get_num_played_games(int playerId)
     {
         Player* player = playersById.find(&playerId);
         int totalGames = player->getPlayerGamesPlayed() + (player->getTeam())->getTeamGamesPlayed();
-        return *(new output_t<int>(totalGames));
+        if(totalGames < 0) totalGames = 0;
+        return output_t<int>(totalGames);
     }
     catch(NodeDoesNotExist& e)
     {
@@ -323,8 +324,24 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
 
 output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 {
-    // TODO: Your code goes here
-    return 1006;
+    if(playerId <= 0 || teamId <= 0)
+    {
+        return  output_t<int>(StatusType::INVALID_INPUT);
+    }
+    try
+    {
+        Team* team = teams.find(&teamId);
+        int closestKey = *team->getPlayers()->getClosestKey(&playerId);
+        return output_t<int>(closestKey);
+    }
+    catch(NodeDoesNotExist)
+    {
+        return output_t<int>(StatusType::FAILURE);
+    }
+    catch(OnlyOneNodeInTree)
+    {
+        return output_t<int>(StatusType::FAILURE);
+    }
 }
 
 output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
