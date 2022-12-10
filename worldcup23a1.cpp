@@ -399,7 +399,7 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
         if(!next && prev) return prev->value->getPlayerId();
         if(next && !prev) return next->value->getPlayerId();
         if(!next && !prev) throw OnlyOneNodeInTree();
-        return output_t<int>((absolute(next->value->getPlayerId()-playerId) > absolute(prev->value->getPlayerId()-playerId)) ? next->value->getPlayerId() : prev->value->getPlayerId());
+        return output_t<int>((absolute(next->value->getPlayerId()-playerId) > absolute(prev->value->getPlayerId()-playerId)) ? prev->value->getPlayerId() : next->value->getPlayerId());
     }
     catch(NodeDoesNotExist&)
     {
