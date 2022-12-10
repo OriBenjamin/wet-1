@@ -41,7 +41,6 @@ private:
     //const getters
 
     int getTeamId() const {return teamId;}
-    int& getTeamIdRef() {return this->teamId;}
     int getPoints() const {return points;}
     int getGoalSum() const {return goalSum;}
     int getCardSum() const {return cardSum;}
@@ -52,7 +51,8 @@ private:
      Tree<int,Player>* getPlayers() {return &players;}
      Tree<Player,Player>* getPlayersByStatistics() {return &playersByStatistics;}
 
-
+    //getter
+    int& getTeamIdRef() {return this->teamId;}
 
     //setters
     void setGoalKeepers(int goalKeepers) {this->goalKeepers=goalKeepers;};

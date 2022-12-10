@@ -69,6 +69,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         {
             return StatusType::INVALID_INPUT;
         }
+        if(playersById.exists(&playerId)) return StatusType::FAILURE;
         Team* team = teams.find(&teamId);
         Player* player = new Player(playerId,gamesPlayed-team->getTeamGamesPlayed(),goals,cards,goalKeeper,team);
         team->insertPlayer(*player);
@@ -113,7 +114,9 @@ StatusType world_cup_t::remove_player(int playerId)
         team->removePlayer(*player);
         if(playersByStatistics.getSize() == 0) topScorerPlayer = nullptr;
         else topScorerPlayer = playersByStatistics.getLastNodeValue();
-        if(knockoutTeams.exists(&(team->getTeamIdRef()))) knockoutTeams.remove(&(team->getTeamIdRef()));
+        if(team->getSize() < 11 || team->getGoalKeepers() <= 0) {
+            if (knockoutTeams.exists(&(team->getTeamIdRef()))) knockoutTeams.remove(&(team->getTeamIdRef()));
+        }
         delete player;
         player = nullptr;
     }
