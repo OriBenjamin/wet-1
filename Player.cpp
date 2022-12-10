@@ -57,7 +57,7 @@ bool Player::operator<(const Player& player) const
             }
             else if(this->playerId > player.playerId)
             {
-                return true;
+                return false;
             }
         }
     }
