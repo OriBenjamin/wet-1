@@ -73,11 +73,11 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         Team* team = teams.find(&teamId);
         Player* player = new Player(playerId,gamesPlayed-team->getTeamGamesPlayed(),goals,cards,goalKeeper,team);
         team->insertPlayer(*player);
-        int closestKey = playersByStatistics.getClosestKey(player)->getPlayerId();
-        player->setClosestPlayer(closestKey);
         playersById.insert(&(player->getPlayerIdRef()), player);
         playersByStatistics.insert(player, player);
         topScorerPlayer =  playersByStatistics.getLastNodeValue();
+        int closestKey = playersByStatistics.getClosestKey(player)->getPlayerId();
+        player->setClosestPlayer(closestKey);
         if(team->getSize() >= 11 && team->getGoalKeepers() > 0 && !knockoutTeams.exists(&team->getTeamIdRef()))
         {
             knockoutTeams.insert(&team->getTeamIdRef(), team);
