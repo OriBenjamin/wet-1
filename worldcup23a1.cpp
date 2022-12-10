@@ -136,6 +136,7 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
         Player *player = playersById.find(&playerId);
         playersByStatistics.remove(player);
         player->getTeam()->removePlayer(*player);
+        playersById.remove(&playerId);
         player->setGamesPlayed(player->getPlayerGamesPlayed()+gamesPlayed);
         player->setCardsReceived(player->getPlayerCardsReceived()+cardsReceived);
         player->setGoals(player->getPlayerGoals()+scoredGoals);
@@ -146,6 +147,10 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
     catch (NodeDoesNotExist&)
     {
         return StatusType::FAILURE;
+    }
+    catch (NodeAlreadyExist&)
+    {
+        return StatusType::INVALID_INPUT;
     }
     return StatusType::SUCCESS;
 }
@@ -379,11 +384,11 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
         int closestKey = *team->getPlayers()->getClosestKey(&playerId);
         return output_t<int>(closestKey);
     }
-    catch(NodeDoesNotExist)
+    catch(NodeDoesNotExist&)
     {
         return output_t<int>(StatusType::FAILURE);
     }
-    catch(OnlyOneNodeInTree)
+    catch(OnlyOneNodeInTree&)
     {
         return output_t<int>(StatusType::FAILURE);
     }
