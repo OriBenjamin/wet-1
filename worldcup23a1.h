@@ -70,5 +70,5 @@ class world_cup_t
 };
 
 void playKnockout(Pair<int,int>* finalKnockoutTeamArray, int numOfKnockoutTeams);
-int abs(int a);
+int absolute(int a);
 #endif // WORLDCUP23A1_H_

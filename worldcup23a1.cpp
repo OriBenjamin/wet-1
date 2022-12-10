@@ -379,7 +379,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
     return StatusType::SUCCESS;
 }
 
-int abs(int a)
+int absolute(int a)
 {
     return (a>0) ? a : -a;
 }
@@ -399,7 +399,7 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
         if(!next && prev) return prev->value->getPlayerId();
         if(next && !prev) return next->value->getPlayerId();
         if(!next && !prev) throw OnlyOneNodeInTree();
-        return output_t<int>((abs(next->value->getPlayerId()-playerId) > abs(prev->value->getPlayerId()-playerId)) ? next->value->getPlayerId() : prev->value->getPlayerId());
+        return output_t<int>((absolute(next->value->getPlayerId()-playerId) > absolute(prev->value->getPlayerId()-playerId)) ? next->value->getPlayerId() : prev->value->getPlayerId());
     }
     catch(NodeDoesNotExist&)
     {
