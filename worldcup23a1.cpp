@@ -332,6 +332,10 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
     {
         return StatusType::INVALID_INPUT;
     }
+    if(playersById.getSize() == 0)
+    {
+        return StatusType::FAILURE;
+    }
     try
     {
         int start = 0;

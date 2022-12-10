@@ -89,4 +89,5 @@ void Team::updatePlayersGamePlayed() //O(n)
         nodeArray[i]->value->setGamesPlayed(nodeArray[i]->value->getPlayerGamesPlayed()+teamGamesPlayed);
     }
     this->setTeamGamesPlayed(0);
+    delete[] nodeArray;
 }
