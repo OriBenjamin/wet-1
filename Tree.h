@@ -382,8 +382,11 @@ Node<Key,Value>* Tree<Key,Value>::removeNode(Node<Key, Value> *currentNode, Key*
         if(currentNode->left && !currentNode->right)
         {
             connectSonParent(currentNode,currentNode->left);
-            currentNode = currentNode->parent; //now the root of current tree is the parent
-
+            if(currentNode->parent) {
+                currentNode = currentNode->parent; //now the root of current tree is the parent
+            } else {
+                currentNode = currentNode->left;
+            }
             if(currentNode && !currentNode->parent)
             {
                 root = currentNode;
@@ -393,8 +396,11 @@ Node<Key,Value>* Tree<Key,Value>::removeNode(Node<Key, Value> *currentNode, Key*
         else if(currentNode->right && !currentNode->left)
         {
             connectSonParent(currentNode,currentNode->right);
-            currentNode = currentNode->parent;
-
+            if(currentNode->parent) {
+                currentNode = currentNode->parent; //now the root of current tree is the parent
+            } else {
+                currentNode = currentNode->right;
+            }
             if(currentNode && !currentNode->parent)
             {
                 root = currentNode;
