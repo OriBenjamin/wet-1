@@ -5,7 +5,7 @@
 #include "Player.h"
 
 Player::Player(int playerId, int gamesPlayed, int goals, int cardsReceived, bool canBeGoalkeeper, Team* team):
-playerId(playerId), gamesPlayed(gamesPlayed), goals(goals),
+playerId(playerId), gamesPlayed(gamesPlayed), goals(goals), closestPlayer(-1),
 cardsReceived(cardsReceived), canBeGoalkeeper(canBeGoalkeeper), team(team)
 {
     /*if(playerId<=0 || gamesPlayed<0 || goals<0 || cardsReceived<0 ||
@@ -79,6 +79,14 @@ std::ostream &operator<<(std::ostream &os, const Player &player) {
        << " goals: " << player.goals << " cardsReceived: " << player.cardsReceived << " canBeGoalkeeper: "
        << player.canBeGoalkeeper;
     return os;
+}
+
+void Player::setClosestPlayer(int closestPlayer) {
+    Player::closestPlayer = closestPlayer;
+}
+
+int Player::getClosestPlayer() const {
+    return closestPlayer;
 }
 
 

@@ -73,6 +73,8 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         Team* team = teams.find(&teamId);
         Player* player = new Player(playerId,gamesPlayed-team->getTeamGamesPlayed(),goals,cards,goalKeeper,team);
         team->insertPlayer(*player);
+        int closestKey = playersByStatistics.getClosestKey(player)->getPlayerId();
+        player->setClosestPlayer(closestKey);
         playersById.insert(&(player->getPlayerIdRef()), player);
         playersByStatistics.insert(player, player);
         topScorerPlayer =  playersByStatistics.getLastNodeValue();
@@ -147,6 +149,8 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
         playersByStatistics.insert(player,player);
         player->getTeam()->insertPlayer(*player);
         topScorerPlayer =  playersByStatistics.getLastNodeValue();
+        int closestKey = playersByStatistics.getClosestKey(player)->getPlayerId();
+        player->setClosestPlayer(closestKey);
     }
     catch (NodeDoesNotExist&)
     {
@@ -387,8 +391,12 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
     {
         Team* team = teams.find(&teamId);
         Player* player = team->getPlayers()->find(&playerId);
-        int closestKey = playersByStatistics.getClosestKey(player)->getPlayerId();
-        return output_t<int>(closestKey);
+        int closest = player->getClosestPlayer();
+        if(closest < 0)
+        {
+            return StatusType::FAILURE;
+        }
+        return output_t<int>(closest);
     }
     catch(NodeDoesNotExist&)
     {
