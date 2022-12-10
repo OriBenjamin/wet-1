@@ -143,15 +143,13 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
         playersById.insert(&(player->getPlayerId()), player);
         playersByStatistics.insert(player,player);
         player->getTeam()->insertPlayer(*player);
+        topScorerPlayer =  playersByStatistics.getLastNodeValue();
     }
     catch (NodeDoesNotExist&)
     {
         return StatusType::FAILURE;
     }
-    catch (NodeAlreadyExist&)
-    {
-        return StatusType::INVALID_INPUT;
-    }
+
     return StatusType::SUCCESS;
 }
 
@@ -165,7 +163,7 @@ StatusType world_cup_t::play_match(int teamId1, int teamId2)
     {
         Team* team1 = teams.find(&teamId1);
         Team* team2 = teams.find(&teamId2);
-        if(!knockoutTeams.exists(&teamId1) || !!knockoutTeams.exists(&teamId2))
+        if(!knockoutTeams.exists(&teamId1) || !knockoutTeams.exists(&teamId2))
         {
            return StatusType::FAILURE;
         }
@@ -381,7 +379,8 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
     try
     {
         Team* team = teams.find(&teamId);
-        int closestKey = *team->getPlayers()->getClosestKey(&playerId);
+        Player* player = team->getPlayers()->find(&playerId);
+        int closestKey = (*playersByStatistics.getClosestKey(player)).getPlayerId();
         return output_t<int>(closestKey);
     }
     catch(NodeDoesNotExist&)
