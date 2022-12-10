@@ -220,7 +220,7 @@ Node<Key,Value>* Tree<Key,Value>::insertNode(Node<Key,Value>* currentNode, Node<
     }
     else
     {
-        if(!nodeForInsertion->prev || nodeForInsertion->prev->key < currentNode->key)
+        if(!nodeForInsertion->prev || *nodeForInsertion->prev->key < *currentNode->key)
         {
             nodeForInsertion->prev = currentNode;
         }
