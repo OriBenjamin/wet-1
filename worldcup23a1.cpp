@@ -80,15 +80,15 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
             knockoutTeams.insert(&team->getTeamIdRef(), team);
         }
     }
-    catch(std::invalid_argument&)
+    catch(std::invalid_argument& e)
     {
         return StatusType::INVALID_INPUT;
     }
-    catch(std::bad_alloc&)
+    catch(std::bad_alloc& e)
     {
         return StatusType::ALLOCATION_ERROR;
     }
-    catch(NodeAlreadyExist&)
+    catch(NodeAlreadyExist& e)
     {
         return StatusType::FAILURE;
     }
@@ -154,7 +154,8 @@ StatusType world_cup_t::play_match(int teamId1, int teamId2)
     {
         return StatusType::INVALID_INPUT;
     }
-    try {
+    try
+    {
         Team* team1 = teams.find(&teamId1);
         Team* team2 = teams.find(&teamId2);
         if(team1->getSize() < 11 || team2->getSize() < 11 || team1->getGoalKeepers()<=0 || team2->getGoalKeepers()<=0)
@@ -202,6 +203,10 @@ output_t<int> world_cup_t::get_num_played_games(int playerId)
     catch(NodeDoesNotExist& e)
     {
         return output_t<int>(StatusType::FAILURE);
+    }
+    catch(std::bad_alloc& e)
+    {
+        return output_t<int>(StatusType::ALLOCATION_ERROR);
     }
 }
 
@@ -304,6 +309,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
             {
                 output[i] = nodesArray[i]->getKey().getPlayerId();
             }
+            delete[] nodesArray;
         }
         else
         {
@@ -313,11 +319,16 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
             {
                 output[i] = nodesArray[i]->getKey().getPlayerId();
             }
+            delete[] nodesArray;
         }
     }
     catch(NodeDoesNotExist& e)
     {
         return StatusType::FAILURE;
+    }
+    catch(std::bad_alloc& e)
+    {
+        return StatusType::ALLOCATION_ERROR;
     }
     return StatusType::SUCCESS;
 }
@@ -346,6 +357,122 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 
 output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
 {
-
+    if(minTeamId<0 || maxTeamId< 0 || minTeamId>maxTeamId)
+    {
+        return output_t<int>(StatusType::INVALID_INPUT);
+    }
+    try
+    {
+        int start = 0;
+        int& index = start;
+        Node<int,Team>** allKnockoutTeamsArray = new Node<int,Team>*[knockoutTeams.getSize()];
+        convertTreeToPointersArray(knockoutTeams.getRoot(), allKnockoutTeamsArray, index);
+        int numOfKnockoutTeams = 0;
+        for(int i=0; i<knockoutTeams.getSize(); i++)
+        {
+            int teamId = allKnockoutTeamsArray[i]->value->getTeamId();
+            if(teamId>=minTeamId && teamId<=maxTeamId)
+            {
+                numOfKnockoutTeams++;
+            }
+        }
+        if(numOfKnockoutTeams == 0)
+        {
+            return output_t<int>(StatusType::FAILURE);
+        }
+        Pair<int,int>* lastTeam = new Pair<int,int>(-1,-1);
+        if(numOfKnockoutTeams % 2  != 0)
+        {
+            lastTeam->getFirst() = allKnockoutTeamsArray[numOfKnockoutTeams-1]->value->getTeamId();
+            lastTeam->getSecond() = allKnockoutTeamsArray[numOfKnockoutTeams-1]->value->getPoints() +
+                                    allKnockoutTeamsArray[numOfKnockoutTeams-1]->value->getGoalSum() -
+                                    allKnockoutTeamsArray[numOfKnockoutTeams-1]->value->getCardSum();
+            numOfKnockoutTeams--;
+        }
+        Pair<int,int>* finalKnockoutTeamArray = new Pair<int,int>[2*numOfKnockoutTeams];
+        for(int i=numOfKnockoutTeams; i<2*numOfKnockoutTeams; i++)
+        {
+            finalKnockoutTeamArray[i].getFirst() = allKnockoutTeamsArray[i-numOfKnockoutTeams]->value->getTeamId();
+            finalKnockoutTeamArray[i].getSecond() = allKnockoutTeamsArray[i-numOfKnockoutTeams]->value->getPoints() +
+                                                       allKnockoutTeamsArray[i-numOfKnockoutTeams]->value->getGoalSum() -
+                                                       allKnockoutTeamsArray[i-numOfKnockoutTeams]->value->getCardSum();
+        }
+        delete[] allKnockoutTeamsArray;
+        playKnockout(finalKnockoutTeamArray, numOfKnockoutTeams);
+        if(finalKnockoutTeamArray[1].getSecond() > lastTeam->getSecond())
+        {
+            int winner = finalKnockoutTeamArray[1].getFirst();
+            delete lastTeam;
+            delete[] finalKnockoutTeamArray;
+            return winner;
+        }
+        else if(finalKnockoutTeamArray[1].getSecond() < lastTeam->getSecond())
+        {
+            int winner = lastTeam->getFirst();
+            delete lastTeam;
+            delete[] finalKnockoutTeamArray;
+            return winner;
+        }
+        else
+        {
+            if(finalKnockoutTeamArray[1].getFirst() > lastTeam->getFirst())
+            {
+                int winner = finalKnockoutTeamArray[1].getFirst();
+                delete lastTeam;
+                delete[] finalKnockoutTeamArray;
+                return winner;
+            }
+            else
+            {
+                int winner = lastTeam->getFirst();
+                delete lastTeam;
+                delete[] finalKnockoutTeamArray;
+                return winner;
+            }
+        }
+    }
+    catch(std::bad_alloc& e)
+    {
+        return output_t<int>(StatusType::ALLOCATION_ERROR);
+    }
 }
 
+
+void playKnockout(Pair<int,int>* finalKnockoutTeamArray, int numOfKnockoutTeams)
+{
+    if(numOfKnockoutTeams == 1)
+    {
+        return;
+    }
+    for(int i=0; i<numOfKnockoutTeams/2; i++)
+    {
+        if(finalKnockoutTeamArray[numOfKnockoutTeams].getSecond() > finalKnockoutTeamArray[numOfKnockoutTeams+1].getSecond())
+        {
+            finalKnockoutTeamArray[i].getFirst() = finalKnockoutTeamArray[numOfKnockoutTeams].getFirst();
+            finalKnockoutTeamArray[i].getSecond() = finalKnockoutTeamArray[numOfKnockoutTeams].getSecond() +
+                    finalKnockoutTeamArray[numOfKnockoutTeams+1].getSecond() + 3;
+        }
+        else if(finalKnockoutTeamArray[numOfKnockoutTeams].getSecond() < finalKnockoutTeamArray[numOfKnockoutTeams+1].getSecond())
+        {
+            finalKnockoutTeamArray[i].getFirst() = finalKnockoutTeamArray[numOfKnockoutTeams+1].getFirst();
+            finalKnockoutTeamArray[i].getSecond() = finalKnockoutTeamArray[numOfKnockoutTeams].getSecond() +
+                                                    finalKnockoutTeamArray[numOfKnockoutTeams+1].getSecond() + 3;
+        }
+        else
+        {
+            if(finalKnockoutTeamArray[numOfKnockoutTeams].getFirst() > finalKnockoutTeamArray[numOfKnockoutTeams+1].getFirst())
+            {
+                finalKnockoutTeamArray[i].getFirst() = finalKnockoutTeamArray[numOfKnockoutTeams].getFirst();
+                finalKnockoutTeamArray[i].getSecond() = finalKnockoutTeamArray[numOfKnockoutTeams].getSecond() +
+                                                           finalKnockoutTeamArray[numOfKnockoutTeams+1].getSecond() + 3;
+            }
+            else
+            {
+                finalKnockoutTeamArray[i].getFirst() = finalKnockoutTeamArray[numOfKnockoutTeams+1].getFirst();
+                finalKnockoutTeamArray[i].getSecond() = finalKnockoutTeamArray[numOfKnockoutTeams].getSecond() +
+                                                        finalKnockoutTeamArray[numOfKnockoutTeams+1].getSecond() + 3;
+            }
+        }
+    }
+    playKnockout(finalKnockoutTeamArray, numOfKnockoutTeams/2);
+}

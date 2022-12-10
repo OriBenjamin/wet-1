@@ -19,6 +19,7 @@
 #include "Tree.h"
 #include "Team.h"
 #include "Player.h"
+#include "Pair.h"
 
 class world_cup_t
 {
@@ -67,5 +68,7 @@ class world_cup_t
 
     // } </DO-NOT-MODIFY>
 };
+
+void playKnockout(Pair<int,int>* finalKnockoutTeamArray, int numOfKnockoutTeams);
 
 #endif // WORLDCUP23A1_H_
