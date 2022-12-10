@@ -76,6 +76,8 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         playersById.insert(&(player->getPlayerIdRef()), player);
         playersByStatistics.insert(player, player);
         topScorerPlayer =  playersByStatistics.getLastNodeValue();
+        Node<Player,Player>* playerNode = playersByStatistics.findNode(playersByStatistics.getRoot(), player);
+        player->setPlayerNodeInStats(playerNode);
         if(team->getSize() >= 11 && team->getGoalKeepers() > 0 && !knockoutTeams.exists(&team->getTeamIdRef()))
         {
             knockoutTeams.insert(&team->getTeamIdRef(), team);
@@ -98,16 +100,6 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         return StatusType::FAILURE;
     }
 
-    try
-    {
-        Player *player = playersById.find(&playerId);
-        int closestKey = playersByStatistics.getClosestKey(player)->getPlayerId();
-        player->setClosestPlayer(closestKey);
-    }
-    catch(OnlyOneNodeInTree&)
-    {
-
-    }
     return StatusType::SUCCESS;
 }
 
@@ -162,16 +154,6 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
     catch (NodeDoesNotExist&)
     {
         return StatusType::FAILURE;
-    }
-    try
-    {
-        Player *player = playersById.find(&playerId);
-        int closestKey = playersByStatistics.getClosestKey(player)->getPlayerId();
-        player->setClosestPlayer(closestKey);
-    }
-    catch(OnlyOneNodeInTree&)
-    {
-
     }
     return StatusType::SUCCESS;
 }
@@ -407,12 +389,12 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
     {
         Team* team = teams.find(&teamId);
         Player* player = team->getPlayers()->find(&playerId);
-        int closest = player->getClosestPlayer();
-        if(closest < 0)
-        {
-            return StatusType::FAILURE;
-        }
-        return output_t<int>(closest);
+        Node<Player,Player>* next = player->getPlayerNodeInStats()->next;
+        Node<Player,Player>* prev = player->getPlayerNodeInStats()->prev;
+        if(!next && prev) return prev->value->getPlayerId();
+        if(next && !prev) return next->value->getPlayerId();
+        if(!next && !prev) throw OnlyOneNodeInTree();
+        return output_t<int>((next->value->getPlayerId() > prev->value->getPlayerId()) ?next->value->getPlayerId() : prev->value->getPlayerId());
     }
     catch(NodeDoesNotExist&)
     {

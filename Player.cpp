@@ -5,7 +5,7 @@
 #include "Player.h"
 
 Player::Player(int playerId, int gamesPlayed, int goals, int cardsReceived, bool canBeGoalkeeper, Team* team):
-playerId(playerId), gamesPlayed(gamesPlayed), goals(goals), closestPlayer(-1),
+playerId(playerId), gamesPlayed(gamesPlayed), goals(goals), closestPlayer(-1), playerNodeInStats(nullptr),
 cardsReceived(cardsReceived), canBeGoalkeeper(canBeGoalkeeper), team(team)
 {
     /*if(playerId<=0 || gamesPlayed<0 || goals<0 || cardsReceived<0 ||
@@ -87,6 +87,14 @@ void Player::setClosestPlayer(int closestPlayer) {
 
 int Player::getClosestPlayer() const {
     return closestPlayer;
+}
+
+Node<Player, Player> *Player::getPlayerNodeInStats() const {
+    return playerNodeInStats;
+}
+
+void Player::setPlayerNodeInStats(Node<Player, Player> *playerNodeInStats) {
+    Player::playerNodeInStats = playerNodeInStats;
 }
 
 

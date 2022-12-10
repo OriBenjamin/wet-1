@@ -17,7 +17,12 @@ class Player
     int gamesPlayed;
     int goals;
     int closestPlayer;
+    Node<Player,Player>* playerNodeInStats;
+public:
+    void setPlayerNodeInStats(Node<Player, Player> *playerNodeInStats);
 
+public:
+    Node<Player, Player> *getPlayerNodeInStats() const;
 
 private:
     int cardsReceived;
