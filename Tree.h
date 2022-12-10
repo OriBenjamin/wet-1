@@ -58,10 +58,12 @@ class Tree
 
     Value* remove(Key* key);
     Node<Key,Value>* removeNode(Node<Key,Value>* currentNode, Key* key);
+    void balanceTree(Node<Key, Value>* currentNode);
 
     Value* find(Key* key) const;
     Node<Key,Value>* findNode(Node<Key,Value>* currentNode, Key* key) const;
     bool exists(Key* key) const;
+
     Node<Key,Value>* getFirstNode() const;
     Value* getLastNodeValue() const;
 
@@ -258,8 +260,8 @@ Node<Key, Value> * Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, i
             }
         }
         updateHeight(A);
-        updateHeight(Al);
         updateHeight(Alr);
+        updateHeight(Al);
         return Al;
     }
     else if(balanceFactor==2 && leftChildBalanceFactor==-1)
@@ -287,11 +289,11 @@ Node<Key, Value> * Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, i
                 Alr->parent->left = Alr;
             }
         }
+        updateHeight(Alrr);
+        updateHeight(Alrl);
         updateHeight(A);
         updateHeight(Al);
         updateHeight(Alr);
-        updateHeight(Alrr);
-        updateHeight(Alrl);
         return Alr;
     }
     else if(balanceFactor==-2 && rightChildBalanceFactor<0)
@@ -314,8 +316,8 @@ Node<Key, Value> * Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, i
             }
         }
         updateHeight(A);
-        updateHeight(Ar);
         updateHeight(Arl);
+        updateHeight(Ar);
         return Ar;
     }
     else if(balanceFactor==-2 && rightChildBalanceFactor==1)
@@ -344,26 +346,46 @@ Node<Key, Value> * Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, i
                 Arl->parent->left = Arl;
             }
         }
+        updateHeight(Arll);
+        updateHeight(Arlr);
         updateHeight(A);
         updateHeight(Ar);
         updateHeight(Arl);
-        updateHeight(Arll);
-        updateHeight(Arlr);
         return Arl;
     }
 
     return currentNode;
 }
 
+template<class Key,class Value>
+void Tree<Key, Value>::balanceTree(Node<Key, Value>* currentNode)
+{
+    if(currentNode)
+    {
+        updateHeight(currentNode);
+        int rightChildBalanceFactor = getBalanceFactor(currentNode->right);
+        int leftChildBalanceFactor = getBalanceFactor(currentNode->left);
+        int balanceFactor = getBalanceFactor(currentNode);
+        Node<Key, Value> *rotatedTree = getRotated(currentNode, rightChildBalanceFactor, leftChildBalanceFactor,
+                                                   balanceFactor);
+        if (root == currentNode) {
+            root = rotatedTree;
+        }
+
+        balanceTree(currentNode->parent);
+    }
+};
 
 template<class Key, class Value>
 Value* Tree<Key,Value>::remove(Key* key)
 {
     Node<Key,Value>* removedNode = removeNode(root, key);
+    if(!removedNode->parent) root = nullptr;
+    else if(!removedNode->parent->parent) root = removedNode->parent;
+    balanceTree(removedNode->parent);
     Value* val = removedNode->value;
     delete removedNode;
     removedNode = nullptr;
-    if(size == 1) {root = nullptr;}
     this->size--;
     return val;
 }
@@ -375,13 +397,14 @@ Node<Key,Value>* Tree<Key,Value>::removeNode(Node<Key, Value> *currentNode, Key*
     {
         throw NodeDoesNotExist();
     }
-    Node<Key, Value>* removedNode = currentNode;
+    Node<Key, Value>* removedNode;
     if(*key == *currentNode->key)
     {
         if(currentNode->left && !currentNode->right)
         {
             connectSonParent(currentNode,currentNode->left);
-            if(currentNode->parent) {
+            return currentNode;
+            /*if(currentNode->parent) {
                 currentNode = currentNode->parent; //now the root of current tree is the parent
             } else {
                 currentNode = currentNode->left;
@@ -390,12 +413,14 @@ Node<Key,Value>* Tree<Key,Value>::removeNode(Node<Key, Value> *currentNode, Key*
             {
                 root = currentNode;
             }
+            removedNode = currentNode;*/
         }
 
         else if(currentNode->right && !currentNode->left)
         {
             connectSonParent(currentNode,currentNode->right);
-            if(currentNode->parent) {
+            return currentNode;
+            /*if(currentNode->parent) {
                 currentNode = currentNode->parent; //now the root of current tree is the parent
             } else {
                 currentNode = currentNode->right;
@@ -404,28 +429,18 @@ Node<Key,Value>* Tree<Key,Value>::removeNode(Node<Key, Value> *currentNode, Key*
             {
                 root = currentNode;
             }
+            removedNode = currentNode;*/
         }
         else if(currentNode->right && currentNode->left)
         {
             //swap
-            //cout<<"third";
-           // if(currentNode->right) {
             Key* currentKey = currentNode->key;
             Value* currentValue = currentNode->value;
             currentNode->key = currentNode->next->key;
             currentNode->value = currentNode->next->value;
             currentNode->next->key = currentKey;
             currentNode->next->value = currentValue;
-            removedNode = removeNode(currentNode->next, key);
-         //   } else {
-             /*   Key* currentKey = currentNode->key;
-                Value* currentValue = currentNode->value;
-                currentNode->key = currentNode->prev->key;
-                currentNode->value = currentNode->prev->value;
-                currentNode->prev->key = currentKey;
-                currentNode->prev->value = currentValue;
-                removedNode = removeNode(currentNode->prev, key);
-            }*/
+            return removeNode(currentNode->next, key);
         }
         else
         {
@@ -436,24 +451,25 @@ Node<Key,Value>* Tree<Key,Value>::removeNode(Node<Key, Value> *currentNode, Key*
             }
             if(currentNode->prev) currentNode->prev->next = currentNode->next;
             if(currentNode->next) currentNode->next->prev = currentNode->prev;
-            currentNode = currentNode->parent;
+            return currentNode;
+            /*currentNode = currentNode->parent;
 
             if(currentNode && !currentNode->parent)
             {
                 root = currentNode;
-            }
+            }*/
         }
     }
     else if(*key < *currentNode->key)
     {
-        removedNode = removeNode(currentNode->left,key);
+        return removeNode(currentNode->left,key);
     }
     else
     {
-        removedNode = removeNode(currentNode->right,key);
+        return removeNode(currentNode->right,key);
     }
 
-    updateHeight(currentNode);
+   /* updateHeight(currentNode);
 
     if(currentNode)
     {
@@ -465,7 +481,7 @@ Node<Key,Value>* Tree<Key,Value>::removeNode(Node<Key, Value> *currentNode, Key*
         {
             root = rotatedTree;
         }
-    }
+    }*/
     return removedNode;
 }
 
