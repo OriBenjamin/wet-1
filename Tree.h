@@ -62,6 +62,7 @@ class Tree
 
     Value* find(Key* key) const;
     Node<Key,Value>* findNode(Node<Key,Value>* currentNode, Key* key) const;
+    bool exists(Key* key) const;
     Node<Key,Value>* getFirstNode() const;
     Value* getLastNodeValue() const;
 
@@ -461,6 +462,22 @@ void Tree<Key,Value>::connectSonParent(Node<Key, Value> *currentNode,Node<Key, V
     }
     updateHeight(son);
     updateHeight(son->parent);
+}
+
+
+template<class Key, class Value>
+bool Tree<Key,Value>::exists(Key* key) const
+{
+    bool isExist = true;
+    try
+    {
+        find(key);
+    }
+    catch(NodeDoesNotExist)
+    {
+        isExist = false;
+    }
+    return isExist;
 }
 
 template<class Key, class Value>

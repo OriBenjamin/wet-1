@@ -50,7 +50,7 @@ StatusType world_cup_t::remove_team(int teamId)
         team = teams.remove(&teamId);
         delete team;
         team = nullptr;
-        knockoutTeams.remove(&teamId);
+        if(knockoutTeams.exists(&teamId)) knockoutTeams.remove(&teamId);
     }
     catch (NodeDoesNotExist&)
     {
@@ -108,10 +108,7 @@ StatusType world_cup_t::remove_player(int playerId)
         Team* team = player->getTeam();
         team->removePlayer(*player);
         topScorerPlayer = playersByStatistics.getLastNodeValue();
-        if(team->getSize() < 11 || team->getGoalKeepers() == 0)
-        {
-            knockoutTeams.remove(&(team->getTeamIdRef()));
-        }
+        if(knockoutTeams.exists(&(team->getTeamIdRef()))) knockoutTeams.remove(&(team->getTeamIdRef()));
         delete player;
         player = nullptr;
     }
@@ -158,7 +155,7 @@ StatusType world_cup_t::play_match(int teamId1, int teamId2)
     {
         Team* team1 = teams.find(&teamId1);
         Team* team2 = teams.find(&teamId2);
-        if(team1->getSize() < 11 || team2->getSize() < 11 || team1->getGoalKeepers()<=0 || team2->getGoalKeepers()<=0)
+        if(!knockoutTeams.exists(&teamId1) || !!knockoutTeams.exists(&teamId2))
         {
            return StatusType::FAILURE;
         }
@@ -233,16 +230,7 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId) {
         return StatusType::INVALID_INPUT;
     }
 
-    bool newTeamIdExists = true;
-    try
-    {
-        teams.find(&newTeamId);
-    }
-    catch(NodeDoesNotExist)
-    {
-        newTeamIdExists = false;
-    }
-    if(newTeamIdExists && newTeamId != teamId1 && newTeamId != teamId2) return StatusType::FAILURE;
+    if(teams.exists(&newTeamId) && newTeamId != teamId1 && newTeamId != teamId2) return StatusType::FAILURE;
 
     try {
             Team *team1 = teams.find(&teamId1);

@@ -17,4 +17,4 @@ add_executable(
         worldcup23a1.h
         Player.cpp
         Player.h
-        main.cpp)
+        main.cpp main23a1.cpp)
