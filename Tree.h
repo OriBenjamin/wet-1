@@ -361,8 +361,8 @@ Value* Tree<Key,Value>::remove(Key* key)
 {
     Node<Key,Value>* removedNode = removeNode(root, key);
     Value* val = removedNode->value;
-    //delete removedNode;
-    //removedNode = nullptr;
+    delete removedNode;
+    removedNode = nullptr;
     if(size == 1) {root = nullptr;}
     this->size--;
     return val;
