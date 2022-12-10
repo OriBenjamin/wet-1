@@ -374,7 +374,7 @@ void Tree<Key, Value>::balanceTree(Node<Key, Value>* currentNode)
 
         balanceTree(currentNode->parent);
     }
-};
+}
 
 template<class Key, class Value>
 Value* Tree<Key,Value>::remove(Key* key)
