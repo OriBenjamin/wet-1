@@ -21,7 +21,10 @@ class Team
 
     private:
     Player* topScorerPlayer;
-    Tree<int,Player> players; //sorted by Id
+    Tree<int,Player> players;
+
+private:
+    //sorted by Id
     Tree<Player,Player> playersByStatistics;
 
     public:
@@ -34,7 +37,7 @@ class Team
     void insertPlayer(Player& player);
     void removePlayer(Player& player);
     void deleteTeamNodes(bool deleteValues);
-
+    void updatePlayersGamePlayed();
     //const getters
 
     int getTeamId() const {return teamId;}
@@ -46,8 +49,8 @@ class Team
     int getTeamGamesPlayed() const {return teamGamesPlayed;}
     Player *getTopScorerPlayer() const {return topScorerPlayer;}
     int getSize() const {return players.getSize();}
-    const Tree<int,Player>* getPlayers() const {return &players;}
-    const Tree<Player,Player>* getPlayersByStatistics() const {return &playersByStatistics;}
+     Tree<int,Player>* getPlayers() {return &players;}
+     Tree<Player,Player>* getPlayersByStatistics() {return &playersByStatistics;}
 
 
 
@@ -57,6 +60,8 @@ class Team
     void setGoalSum(int goalSum) {this->goalSum=goalSum;};
     void setCardSum(int cardSum) {this->cardSum=cardSum;};
     void setTeamGamesPlayed(int teamGamesPlayed) {this->teamGamesPlayed=teamGamesPlayed;};
+    void setPlayers(const Tree<int, Player> &players);
+    void setPlayersByStatistics(const Tree<Player, Player> &playersByStatistics);
 
     friend std::ostream &operator<<(std::ostream &os, const Team &team);
 

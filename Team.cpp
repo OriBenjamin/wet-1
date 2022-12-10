@@ -68,4 +68,24 @@ std::ostream &operator<<(std::ostream &os, const Team &team) {
     return os;
 }
 
+void Team::setPlayers(const Tree<int, Player> &players) {
+    Team::players = players;
+}
 
+void Team::setPlayersByStatistics(const Tree<Player, Player> &playersByStatistics) {
+    Team::playersByStatistics = playersByStatistics;
+}
+
+
+
+void Team::updatePlayersGamePlayed() //O(n)
+{
+    Node<int,Player>** nodeArray = new Node<int,Player>*[this->getSize()];
+    int index = 0;
+    convertTreeToPointersArray(this->players.getRoot(), nodeArray,index);
+    for(int i=0; i<this->getSize(); i++)
+    {
+        nodeArray[i]->value->setGamesPlayed(nodeArray[i]->value->getPlayerGamesPlayed()+teamGamesPlayed);
+    }
+    this->setTeamGamesPlayed(0);
+}

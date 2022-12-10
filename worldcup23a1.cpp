@@ -123,7 +123,7 @@ StatusType world_cup_t::remove_player(int playerId)
 }
 
 StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
-                                            int scoredGoals, int cardsReceived)
+                                            int scoredGoals, int cardsReceived) //knockout teams!!!
 {
     if(playerId<=0 || gamesPlayed<0 || scoredGoals<0 || cardsReceived<0)
     {
@@ -227,10 +227,51 @@ output_t<int> world_cup_t::get_team_points(int teamId)
     }
 }
 
-StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
-{
-    // TODO: Your code goes here
-    return StatusType::SUCCESS;
+StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId) {
+    if(teamId1 <= 0 || teamId2 <= 0 || teamId1 == teamId2 || newTeamId <= 0)
+    {
+        return StatusType::INVALID_INPUT;
+    }
+
+    bool newTeamIdExists = true;
+    try
+    {
+        teams.find(&newTeamId);
+    }
+    catch(NodeDoesNotExist)
+    {
+        newTeamIdExists = false;
+    }
+    if(newTeamIdExists && newTeamId != teamId1 && newTeamId != teamId2) return StatusType::FAILURE;
+
+    try {
+            Team *team1 = teams.find(&teamId1);
+            team1->updatePlayersGamePlayed();
+            Team *team2 = teams.find(&teamId2);
+            team2->updatePlayersGamePlayed();
+            Team *team3 = new Team(newTeamId, team1->getPoints() + team1->getPoints());
+            team3->setPlayers(mergeTrees(*team1->getPlayers(), *team2->getPlayers()));
+            team3->setPlayersByStatistics(mergeTrees(*team1->getPlayersByStatistics(), *team2->getPlayersByStatistics()));
+            team3->setTeamGamesPlayed(0); //update team games
+            team3->setCardSum(team1->getCardSum() + team2->getCardSum());
+            team3->setGoalSum(team1->getGoalSum() + team2->getGoalSum());
+            team3->setGoalKeepers(team1->getGoalKeepers() + team2->getGoalKeepers());
+            remove_team(teamId1);
+            remove_team(teamId2);
+            teams.insert(&team3->getTeamIdRef(), team3);
+            if (team3->getSize() >= 11 && team3->getGoalKeepers() > 0) {
+                knockoutTeams.insert(&team3->getTeamIdRef(), team3);
+            }
+            return StatusType::SUCCESS;
+    }
+    catch(std::bad_alloc&)
+    {
+        return StatusType::ALLOCATION_ERROR;
+    }
+    catch(NodeDoesNotExist&)
+    {
+        return StatusType::FAILURE;
+    }
 }
 
 output_t<int> world_cup_t::get_top_scorer(int teamId)

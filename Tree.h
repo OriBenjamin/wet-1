@@ -46,7 +46,7 @@ class Tree
     virtual ~Tree();
     void deleteTree(bool deleteValues);
     void deleteTreeNodes(Node<Key,Value>* node, bool deleteValues);
-    Tree& operator=(const Tree& t) = delete;
+    Tree& operator=(const Tree& t) = default;
 
     //const getters
     Node<Key, Value> *getRoot() const {return root;}
@@ -69,11 +69,12 @@ class Tree
     void connectSonParent(Node<Key, Value> *currentNode,Node<Key, Value> *son);
 
 
-    Node<Key,Value>* convertTreeToArray(const Node<Key,Value>* currentNode, Node<Key,Value>* nodesArray, int& currentNodeIndex);
-    Tree<Key,Value> sortArrayToTree(Node<Key,Value>** array, int newTreeSize, int start, int end, int arraySize, Node<Key,Value>* parent);
-    Tree<Key,Value>* mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2);
-    Key* getClosestKey(Key* key) const;
+   // Node<Key,Value>* convertTreeToArray(const Node<Key,Value>* currentNode, Node<Key,Value>* nodesArray, int& currentNodeIndex);
+   // Tree<Key,Value> sortArrayToTree(Node<Key,Value>** array, int newTreeSize, int start, int end, int arraySize, Node<Key,Value>* parent);
 
+
+    //friend Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2);
+    Key* getClosestKey(Key* key) const;
 
 
 
