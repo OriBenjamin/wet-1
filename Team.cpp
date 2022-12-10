@@ -35,7 +35,7 @@ void Team::insertPlayer(Player& player)
 
 void Team::removePlayer( Player& player)
 {
-    Player* p = players.remove(&player.getPlayerId());
+    players.remove(&player.getPlayerId());
     playersByStatistics.remove(&player);
     goalSum-=player.getPlayerGoals();
     cardSum-=player.getPlayerCardsReceived();

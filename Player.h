@@ -47,8 +47,6 @@ public:
     //getters
     int& getPlayerId() {return this->playerId;}
 
-    friend std::ostream &operator<<(std::ostream &os, const Player &player);
-
     void setGamesPlayed(int gamesPlayed) {this->gamesPlayed = gamesPlayed;};
     void setGoals(int goals) {this->goals = goals;};
     void setCardsReceived(int cardsReceived) {this->cardsReceived = cardsReceived;};
