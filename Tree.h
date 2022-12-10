@@ -646,14 +646,14 @@ Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2)
     currentNodeIndex = 0;
     convertTreeToPointersArray(t2.getRoot(), t2_array, currentNodeIndex);
     mergeSortWithAVLTree(mergedArray, t1.getSize(),t2.getSize(), t1_array, t2_array);
-   // delete[] t1_array;
-   // delete[] t2_array;
+    delete[] t1_array;
+    delete[] t2_array;
     int start = 0, end = t1.getSize()+t2.getSize() -1;
     Node<Key,Value>* subRoot = sortArrayToTree(mergedArray, start, end,t1.getSize()+t2.getSize(),*mergedArray);
     Node<Key,Value>* *nodesArray = new Node<Key,Value>*[t1.getSize()+t2.getSize()];
     updateNextAndPrev(subRoot, t1.getSize()+t2.getSize(), nodesArray);
-   // delete[] nodesArray;
-   // delete[] mergedArray;
+    delete[] nodesArray;
+    delete[] mergedArray;
     return Tree<Key,Value>(subRoot, t1.getSize()+t2.getSize() -1) ;
 }
 
