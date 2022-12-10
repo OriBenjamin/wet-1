@@ -8,11 +8,11 @@ Player::Player(int playerId, int gamesPlayed, int goals, int cardsReceived, bool
 playerId(playerId), gamesPlayed(gamesPlayed), goals(goals),
 cardsReceived(cardsReceived), canBeGoalkeeper(canBeGoalkeeper), team(team)
 {
-    if(playerId<=0 || gamesPlayed<0 || goals<0 || cardsReceived<0 ||
+    /*if(playerId<=0 || gamesPlayed<0 || goals<0 || cardsReceived<0 ||
     (gamesPlayed == 0 && (cardsReceived>0 || goals>0)) || team == nullptr)
     {
        throw std::invalid_argument("Invalid input- can't build such player");
-    }
+    }*/
 }
 
 void Player::updatePlayer(int gamesPlayed, int goals, int cardsReceived)

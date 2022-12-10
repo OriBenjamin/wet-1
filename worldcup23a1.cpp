@@ -64,7 +64,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
 {
     try
     {
-        if(playerId<=0 || gamesPlayed<0 || goals<0 || cards<0 ||
+        if(playerId<=0 || teamId<=0 || gamesPlayed<0 || goals<0 || cards<0 ||
            (gamesPlayed == 0 && (cards>0 || goals>0)) ) //Invalid Input should be checked first
         {
             return StatusType::INVALID_INPUT;
@@ -75,7 +75,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         playersById.insert(&(player->getPlayerIdRef()), player);
         playersByStatistics.insert(player, player);
         topScorerPlayer =  playersByStatistics.getLastNodeValue();
-        if(team->getSize() >= 11 && team->getGoalKeepers() > 0)
+        if(team->getSize() >= 11 && team->getGoalKeepers() > 0 && !knockoutTeams.exists(&team->getTeamIdRef()))
         {
             knockoutTeams.insert(&team->getTeamIdRef(), team);
         }
@@ -89,6 +89,10 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         return StatusType::ALLOCATION_ERROR;
     }
     catch(NodeAlreadyExist& e)
+    {
+        return StatusType::FAILURE;
+    }
+    catch(NodeDoesNotExist& e)
     {
         return StatusType::FAILURE;
     }
@@ -107,7 +111,8 @@ StatusType world_cup_t::remove_player(int playerId)
         playersByStatistics.remove(player);
         Team* team = player->getTeam();
         team->removePlayer(*player);
-        topScorerPlayer = playersByStatistics.getLastNodeValue();
+        if(playersByStatistics.getSize() == 0) topScorerPlayer = nullptr;
+        else topScorerPlayer = playersByStatistics.getLastNodeValue();
         if(knockoutTeams.exists(&(team->getTeamIdRef()))) knockoutTeams.remove(&(team->getTeamIdRef()));
         delete player;
         player = nullptr;
