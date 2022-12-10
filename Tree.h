@@ -41,9 +41,8 @@ class Tree
     root(NULL), size(INITIAL_SIZE_OF_TREE) {}
     Tree(Node<Key,Value>* root, int size):
             root(root), size(size) {}
-    Tree(const Tree<Key,Value>& tree):
-            root(tree.root), size(tree.size) {}
-    virtual ~Tree();
+    Tree(const Tree<Key,Value>& tree) = default;
+    ~Tree();
     void deleteTree(bool deleteValues);
     void deleteTreeNodes(Node<Key,Value>* node, bool deleteValues);
     Tree& operator=(const Tree& t) = default;
@@ -362,8 +361,8 @@ Value* Tree<Key,Value>::remove(Key* key)
 {
     Node<Key,Value>* removedNode = removeNode(root, key);
     Value* val = removedNode->value;
-    delete removedNode;
-    removedNode = nullptr;
+    //delete removedNode;
+    //removedNode = nullptr;
     if(size == 1) {root = nullptr;}
     this->size--;
     return val;

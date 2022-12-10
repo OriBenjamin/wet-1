@@ -387,7 +387,7 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
     {
         Team* team = teams.find(&teamId);
         Player* player = team->getPlayers()->find(&playerId);
-        int closestKey = (*playersByStatistics.getClosestKey(player)).getPlayerId();
+        int closestKey = playersByStatistics.getClosestKey(player)->getPlayerId();
         return output_t<int>(closestKey);
     }
     catch(NodeDoesNotExist&)
