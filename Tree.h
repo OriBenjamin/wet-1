@@ -368,6 +368,7 @@ void Tree<Key, Value>::balanceTree(Node<Key, Value>* currentNode)
         int balanceFactor = getBalanceFactor(currentNode);
         Node<Key, Value> *rotatedTree = getRotated(currentNode, rightChildBalanceFactor, leftChildBalanceFactor,
                                                    balanceFactor);
+
         if (root == currentNode) {
             root = rotatedTree;
         }
@@ -380,7 +381,12 @@ template<class Key, class Value>
 Value* Tree<Key,Value>::remove(Key* key)
 {
     Node<Key,Value>* removedNode = removeNode(root, key);
-    if(!removedNode->parent) root = nullptr;
+    if(!removedNode->parent)
+    {
+        if(removedNode->right) root = removedNode->right;
+        else if(removedNode->left) root = removedNode->left;
+        else root = nullptr;
+    }
     else if(!removedNode->parent->parent) root = removedNode->parent;
     balanceTree(removedNode->parent);
     Value* val = removedNode->value;
@@ -403,6 +409,8 @@ Node<Key,Value>* Tree<Key,Value>::removeNode(Node<Key, Value> *currentNode, Key*
         if(currentNode->left && !currentNode->right)
         {
             connectSonParent(currentNode,currentNode->left);
+            if(currentNode->prev) currentNode->prev->next = currentNode->next;
+            if(currentNode->next) currentNode->next->prev = currentNode->prev;
             return currentNode;
             /*if(currentNode->parent) {
                 currentNode = currentNode->parent; //now the root of current tree is the parent
@@ -419,6 +427,8 @@ Node<Key,Value>* Tree<Key,Value>::removeNode(Node<Key, Value> *currentNode, Key*
         else if(currentNode->right && !currentNode->left)
         {
             connectSonParent(currentNode,currentNode->right);
+            if(currentNode->prev) currentNode->prev->next = currentNode->next;
+            if(currentNode->next) currentNode->next->prev = currentNode->prev;
             return currentNode;
             /*if(currentNode->parent) {
                 currentNode = currentNode->parent; //now the root of current tree is the parent
@@ -599,7 +609,8 @@ void convertTreeToPointersArray(Node<Key,Value>* currentNode, Node<Key,Value>** 
         return;
     }
     convertTreeToPointersArray(currentNode->left, nodesArray, currentNodeIndex);
-    nodesArray[currentNodeIndex++] = currentNode;
+    nodesArray[currentNodeIndex] = currentNode;
+    currentNodeIndex++;
     convertTreeToPointersArray(currentNode->right, nodesArray, currentNodeIndex);
 }
 

@@ -37,6 +37,7 @@ void Team::removePlayer( Player& player)
 {
     players.remove(&player.getPlayerId());
     playersByStatistics.remove(&player);
+    player.setPlayerNodeInStats(nullptr);
     goalSum-=player.getPlayerGoals();
     cardSum-=player.getPlayerCardsReceived();
     if(playersByStatistics.getSize() == 0) topScorerPlayer = nullptr;
