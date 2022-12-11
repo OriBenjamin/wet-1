@@ -18,7 +18,7 @@ StatusType world_cup_t::add_team(int teamId, int points)
         return StatusType::INVALID_INPUT;
     }
     Team *team = nullptr;
-    if(!teams.exists(&teamId))
+    if(teams.exists(&teamId))
     {
         return StatusType::FAILURE;
     }
