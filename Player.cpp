@@ -69,16 +69,3 @@ void Player::setPlayerNodeInStats(Node<Player, Player> *playerNodeInStats) {
 void Player::setTeam(Team *team) {
     Player::team = team;
 }
-
-
-void updatePlayersFields(Tree<Player,Player>* statsTree)
-{
-    Node<Player,Player>** nodeArray = new Node<Player,Player>*[statsTree->getSize()];
-    int index = 0;
-    convertTreeToPointersArray(statsTree->getRoot(), nodeArray,index);
-    for(int i=0; i<statsTree->getSize(); i++)
-    {
-        nodeArray[i]->value->setPlayerNodeInStats(nodeArray[i]);
-    }
-    delete[] nodeArray;
-}

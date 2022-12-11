@@ -472,15 +472,6 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
         allKnockoutTeamsArray = new Node<int,Team>*[knockoutTeams.getSize()];
         Node<int,Team>* firstTeam = knockoutTeams.getFirstNextNode(&minTeamId);
         int numOfKnockoutTeams = efficientTreeToPointersArray(allKnockoutTeamsArray, firstTeam, &maxTeamId);
-        //int numOfKnockoutTeams = 0;
-        /*for(int i=0; i<knockoutTeams.getSize(); i++)
-        {
-            int teamId = allKnockoutTeamsArray[i]->value->getTeamId();
-            if(teamId>=minTeamId && teamId<=maxTeamId)
-            {
-                numOfKnockoutTeams++;
-            }
-        }*/
         if(numOfKnockoutTeams <= 0)
         {
             delete[] allKnockoutTeamsArray;
