@@ -7,18 +7,12 @@
 
 Team::Team(int teamId, int points):
            teamId(teamId), points(points), goalSum(0), cardSum(0), teamGamesPlayed(0), goalKeepers(0),
-           topScorerPlayer(nullptr), players(), playersByStatistics()
-{
-    if(teamId<=0 || points<0)
-    {
-        throw std::invalid_argument("Invalid input- can't build such team");
-    }
-}
+           topScorerPlayer(nullptr), players(), playersByStatistics() {}
 
 void Team::insertPlayer(Player& player)
 {
 
-    players.insert(&player.getPlayerIdRef(), &player);
+    players.insert(&player.getPlayerId(), &player);
     playersByStatistics.insert(&player, &player);
     goalSum+=player.getPlayerGoals();
     cardSum+=player.getPlayerCardsReceived();
@@ -27,7 +21,7 @@ void Team::insertPlayer(Player& player)
         topScorerPlayer = &player;
     }
     topScorerPlayer = playersByStatistics.getLastNodeValue();
-    if(player.getPlayerCanBeGooalkeeper())
+    if(player.getPlayerCanBeGoalkeeper())
     {
         goalKeepers++;
     }
@@ -42,7 +36,7 @@ void Team::removePlayer( Player& player)
     cardSum-=player.getPlayerCardsReceived();
     if(playersByStatistics.getSize() == 0) topScorerPlayer = nullptr;
     else topScorerPlayer = playersByStatistics.getLastNodeValue();
-    if(player.getPlayerCanBeGooalkeeper())
+    if(player.getPlayerCanBeGoalkeeper())
     {
         goalKeepers--;
     }
@@ -61,13 +55,6 @@ void Team::deleteTeamNodes(bool deleteValues)
         playersByStatistics.deleteTree(false);
         players.deleteTree(false);
     }
-}
-
-
-std::ostream &operator<<(std::ostream &os, const Team &team) {
-    os << "teamId: " << team.teamId << " players: " << team.players << " playersByStatistics: "
-       << team.playersByStatistics;
-    return os;
 }
 
 void Team::setPlayers(const Tree<int, Player> &players) {

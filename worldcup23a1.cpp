@@ -74,7 +74,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         Team* team = teams.find(&teamId);
         Player* player = new Player(playerId,gamesPlayed-team->getTeamGamesPlayed(),goals,cards,goalKeeper,team);
         team->insertPlayer(*player);
-        playersById.insert(&(player->getPlayerIdRef()), player);
+        playersById.insert(&(player->getPlayerId()), player);
         playersByStatistics.insert(player, player);
         topScorerPlayer =  playersByStatistics.getLastNodeValue();
         Node<Player,Player>* playerNode = playersByStatistics.findNode(playersByStatistics.getRoot(), player);

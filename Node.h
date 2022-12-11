@@ -28,11 +28,6 @@ class Node
     Node& operator=(const Node& n) = default;
     bool operator<(const Node<Key,Value>& node) const;
 
-    friend std::ostream &operator<<(std::ostream &os, const Node &node) {
-        os << "right: " << node.right << " left: " << node.left << " key: " << *node.key;
-        return os;
-    }
-
     //const getters
     Key getKey() const;
 };
@@ -80,7 +75,7 @@ bool operator>(const Node<Key,Value>& node1, const Node<Key,Value>& node2)
 }
 
 template<class Key, class Value>
-void mergeSortWithAVLTree(Node<Key,Value>** mergedArray, int t1_size, int t2_size, Node<Key,Value>** t1_array, Node<Key,Value>** t2_array)
+void mergeSort(Node<Key,Value>** mergedArray, int t1_size, int t2_size, Node<Key,Value>** t1_array, Node<Key,Value>** t2_array)
 {
         int a = 0, b = 0, c = 0;
 
