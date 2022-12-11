@@ -18,6 +18,10 @@ StatusType world_cup_t::add_team(int teamId, int points)
         return StatusType::INVALID_INPUT;
     }
     Team *team = nullptr;
+    if(!teams.exists(&teamId))
+    {
+        return StatusType::FAILURE;
+    }
     try
     {
         team = new Team(teamId, points);
@@ -26,11 +30,6 @@ StatusType world_cup_t::add_team(int teamId, int points)
     catch (std::bad_alloc& e)
     {
         return StatusType::ALLOCATION_ERROR;
-    }
-    catch (NodeAlreadyExist&)
-    {
-        delete team;
-        return StatusType::FAILURE;
     }
     return StatusType::SUCCESS;
 }
