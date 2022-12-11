@@ -71,8 +71,8 @@ std::ostream &operator<<(std::ostream &os, const Team &team) {
 }
 
 void Team::setPlayers(const Tree<int, Player> &players) {
-    Team::players.setRoot(nullptr);
-    Team::players = players;
+    this->players.setRoot(nullptr);
+    this->players = players;
 }
 
 void Team::setPlayersByStatistics(const Tree<Player, Player> &playersByStatistics) {

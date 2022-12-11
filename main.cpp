@@ -233,9 +233,24 @@ int main() {
 //    res = obj->remove_player(3007);
 //    cout <<(res == StatusType::SUCCESS);
 
-      res = obj->remove_player(3001);
-      cout <<(res == StatusType::SUCCESS);
-      res = obj->remove_player(3003);
+    res = obj->remove_player(3001);
+    cout <<(res == StatusType::SUCCESS);
+    res = obj->remove_player(3003);
+
+
+    res = obj->add_player(1001, 1, 30, 0, 0, false);
+    cout <<(res == StatusType::SUCCESS);
+    res = obj->add_player(1002, 1, 30, 0, 0, true);
+    cout <<(res == StatusType::SUCCESS);
+    res = obj->add_player(1003, 1, 30, 0, 0, false);
+    cout <<(res == StatusType::SUCCESS);
+    res = obj->add_player(1004, 1, 30, 0, 0, false);
+    cout <<(res == StatusType::SUCCESS);
+
+    res = obj->unite_teams(3, 1, 1);
+    cout <<(res == StatusType::SUCCESS);
+    res = obj->add_player(1010, 1, 30, 0, 0, false);
+    cout <<(res == StatusType::SUCCESS);
     delete obj;
 
     return 0;

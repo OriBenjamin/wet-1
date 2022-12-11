@@ -251,14 +251,16 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId) {
             Team *team2 = teams.find(&teamId2);
             team2->updatePlayersGamePlayed();
             Team *team3 = new Team(newTeamId, team1->getPoints() + team1->getPoints());
-            team3->setPlayers(mergeTrees(*team1->getPlayers(), *team2->getPlayers()));
-            team3->setPlayersByStatistics(mergeTrees(*team1->getPlayersByStatistics(), *team2->getPlayersByStatistics()));
+            team3->setPlayers(*mergeTrees(*team1->getPlayers(), *team2->getPlayers()));
+            team3->setPlayersByStatistics(*mergeTrees(*team1->getPlayersByStatistics(), *team2->getPlayersByStatistics()));
             team3->setTeamGamesPlayed(0); //update team games
             team3->setCardSum(team1->getCardSum() + team2->getCardSum());
             team3->setGoalSum(team1->getGoalSum() + team2->getGoalSum());
             team3->setGoalKeepers(team1->getGoalKeepers() + team2->getGoalKeepers());
-            remove_team(teamId1);
-            remove_team(teamId2);
+            teams.remove(&teamId1);
+            if(knockoutTeams.exists(&teamId1)) knockoutTeams.remove(&teamId1);
+            teams.remove(&teamId2);
+            if(knockoutTeams.exists(&teamId2)) knockoutTeams.remove(&teamId1);
             teams.insert(&team3->getTeamIdRef(), team3);
             if (team3->getSize() >= 11 && team3->getGoalKeepers() > 0) {
                 knockoutTeams.insert(&team3->getTeamIdRef(), team3);

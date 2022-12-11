@@ -43,6 +43,7 @@ class Tree
     Tree(Node<Key,Value>* root, int size):
             root(root), size(size) {}
     Tree(const Tree<Key,Value>& tree) = default;
+
     ~Tree();
     void deleteTree(bool deleteValues);
     void deleteTreeNodes(Node<Key,Value>* node, bool deleteValues);
@@ -669,7 +670,7 @@ void updateNextAndPrev(Node<Key,Value>* currentNode, int size, Node<Key,Value>* 
 }
 
 template<class Key, class Value>
-Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2)
+Tree<Key,Value>* mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2)
 {
     Node<Key,Value>* *t1_array = new Node<Key,Value>*[t1.getSize()];
     Node<Key,Value>* *t2_array = new Node<Key,Value>*[t2.getSize()];
@@ -688,7 +689,7 @@ Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2)
     updateNextAndPrev(subRoot, t1.getSize()+t2.getSize(), nodesArray);
     delete[] nodesArray;
     delete[] mergedArray;
-    return Tree<Key,Value>(subRoot, t1.getSize()+t2.getSize() -1) ;
+    return new Tree<Key,Value>(subRoot, t1.getSize()+t2.getSize()) ;
 }
 
 #endif //HW1_TREE_H
