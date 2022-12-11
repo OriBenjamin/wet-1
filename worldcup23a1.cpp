@@ -257,10 +257,12 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId) {
             team3->setCardSum(team1->getCardSum() + team2->getCardSum());
             team3->setGoalSum(team1->getGoalSum() + team2->getGoalSum());
             team3->setGoalKeepers(team1->getGoalKeepers() + team2->getGoalKeepers());
-            teams.remove(&teamId1);
+            Team* team = teams.remove(&teamId1);
             if(knockoutTeams.exists(&teamId1)) knockoutTeams.remove(&teamId1);
-            teams.remove(&teamId2);
+            delete team;
+            team = teams.remove(&teamId2);
             if(knockoutTeams.exists(&teamId2)) knockoutTeams.remove(&teamId1);
+            delete team;
             teams.insert(&team3->getTeamIdRef(), team3);
             if (team3->getSize() >= 11 && team3->getGoalKeepers() > 0) {
                 knockoutTeams.insert(&team3->getTeamIdRef(), team3);
