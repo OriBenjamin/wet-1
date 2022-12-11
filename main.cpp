@@ -125,88 +125,90 @@ int main() {
     worldCup2022.add_player(2,213,7,2,8,false);
   //  cout << "\nteam 1: " << worldCup2022.teams;
 */
-    world_cup_t *obj = new world_cup_t();
-    int playerId = 1;
-    StatusType res;
-    for (int teamId = 1; teamId < 10; teamId += 2)
-    {
-        res = obj->add_team(teamId, 1000 / ((6 - teamId) * (6 - teamId)));
-        cout << (res == StatusType::SUCCESS);
 
-        for (int startingId = playerId; playerId < startingId + 10 + teamId; ++playerId)
-        {
-            res = obj->add_player(playerId, teamId, 1, playerId, 3, true);
-            cout << (res == StatusType::SUCCESS);
-        }
-        ++playerId;
-    }
-    // Strengths team1:73 team3:319 team5:1485 team7:1816 team9:1384
 
-    res = obj->add_team(4, 1000000);
-    cout << (res == StatusType::SUCCESS);
+world_cup_t *obj = new world_cup_t();
+int playerId = 1;
+StatusType res;
+for (int teamId = 1; teamId < 10; teamId += 2)
+{
+res = obj->add_team(teamId, 1000 / ((6 - teamId) * (6 - teamId)));
+cout << (res == StatusType::SUCCESS);
 
-    output_t<int> res1 = obj->knockout_winner(8, 9);
-    cout << (res1.status() == StatusType::SUCCESS);
-    cout << (res1.ans() == 9);
+for (int startingId = playerId; playerId < startingId + 10 + teamId; ++playerId)
+{
+res = obj->add_player(playerId, teamId, 1, playerId, 3, true);
+cout << (res == StatusType::SUCCESS);
+}
+++playerId;
+}
+// Strengths team1:73 team3:319 team5:1485 team7:1816 team9:1384
 
-    output_t<int> res2 = obj->knockout_winner(1, 1);
-    cout << (res2.status() == StatusType::SUCCESS);
-    cout << (res2.ans() == 1);
+res = obj->add_team(4, 1000000);
+cout << (res == StatusType::SUCCESS);
 
-    output_t<int> res3 = obj->knockout_winner(2, 4);
-    cout << (res3.status() == StatusType::SUCCESS);
-    cout << (res3.ans() == 3);
+output_t<int> res1 = obj->knockout_winner(8, 9);
+cout << (res1.status() == StatusType::SUCCESS);
+cout << (res1.ans() == 9);
 
-    output_t<int> res4 = obj->knockout_winner(3, 9);
-    cout << (res4.status() == StatusType::SUCCESS);
-    cout << (res4.ans() == 7);
+output_t<int> res2 = obj->knockout_winner(1, 1);
+cout << (res2.status() == StatusType::SUCCESS);
+cout << (res2.ans() == 1);
 
-    output_t<int> res5 = obj->knockout_winner(2, 8);
-    cout << (res5.status() == StatusType::SUCCESS);
-    cout << (res5.ans() == 7);
+output_t<int> res3 = obj->knockout_winner(2, 4);
+cout << (res3.status() == StatusType::SUCCESS);
+cout << (res3.ans() == 3);
 
-    output_t<int> res6 = obj->knockout_winner(0, 5);
-    cout << (res6.status() == StatusType::SUCCESS);
-    cout << (res6.ans() == 5);
+output_t<int> res4 = obj->knockout_winner(3, 9);
+cout << (res4.status() == StatusType::SUCCESS);
+cout << (res4.ans() == 7);
 
-    output_t<int> res7 = obj->knockout_winner(1, 9);
-    cout << (res7.status() == StatusType::SUCCESS);
-    cout << (res7.ans() == 7);
+output_t<int> res5 = obj->knockout_winner(2, 8);
+cout << (res5.status() == StatusType::SUCCESS);
+cout << (res5.ans() == 7);
 
-    res = obj->add_player(999, 3, 1, 3000, 200, false);
-    cout << (res == StatusType::SUCCESS);
-    // Strengths team1:73 team3:3119 team5:1485 team7:1816 team9:1384
+output_t<int> res6 = obj->knockout_winner(0, 5);
+cout << (res6.status() == StatusType::SUCCESS);
+cout << (res6.ans() == 5);
 
-    output_t<int> res8 = obj->knockout_winner(1, 999);
-    cout << (res8.status() == StatusType::SUCCESS);
-    cout << (res8.ans() == 7);
+output_t<int> res7 = obj->knockout_winner(1, 9);
+cout << (res7.status() == StatusType::SUCCESS);
+cout << (res7.ans() == 7);
 
-    res = obj->add_player(998, 3, 1, 2000, 0, false);
-    cout << (res == StatusType::SUCCESS);
-    // Strengths team1:73 team3: 5119 team5:1485 team7:1816 team9:1384
+res = obj->add_player(999, 3, 1, 3000, 200, false);
+cout << (res == StatusType::SUCCESS);
+// Strengths team1:73 team3:3119 team5:1485 team7:1816 team9:1384
 
-    output_t<int> res9 = obj->knockout_winner(0, 13);
-    cout << (res9.status() == StatusType::SUCCESS);
-    cout << (res9.ans() == 3);
+output_t<int> res8 = obj->knockout_winner(1, 999);
+cout << (res8.status() == StatusType::SUCCESS);
+cout << (res8.ans() == 7);
 
-    res = obj->add_player(997, 3, 1, 1, 5001, false);
-    cout << (res == StatusType::SUCCESS);
-    // Strengths team1:73 team3:119 team5:1485 team7:1816 team9:1384
+res = obj->add_player(998, 3, 1, 2000, 0, false);
+cout << (res == StatusType::SUCCESS);
+// Strengths team1:73 team3: 5119 team5:1485 team7:1816 team9:1384
 
-    output_t<int> res9andahalf = obj->knockout_winner(0, 13);
-    cout << (res9andahalf.status() == StatusType::SUCCESS);
-    cout << (res9andahalf.ans() == 7);
+output_t<int> res9 = obj->knockout_winner(0, 13);
+cout << (res9.status() == StatusType::SUCCESS);
+cout << (res9.ans() == 3);
 
-    res = obj->update_player_stats(79, 1, 10000, 0);
-    cout << (res == StatusType::SUCCESS);
-    // Strengths team1:73 team3:119 team5:1485 team7:1816 team9:11384
+res = obj->add_player(997, 3, 1, 1, 5001, false);
+cout << (res == StatusType::SUCCESS);
+// Strengths team1:73 team3:119 team5:1485 team7:1816 team9:1384
 
-    output_t<int> res10 = obj->knockout_winner(1, 9);
-    cout << (res10.status() == StatusType::SUCCESS);
+output_t<int> res9andahalf = obj->knockout_winner(0, 13);
+cout << (res9andahalf.status() == StatusType::SUCCESS);
+cout << (res9andahalf.ans() == 7);
 
-    cout << (res10.ans() == 9);
+res = obj->update_player_stats(79, 1, 10000, 0);
+cout << (res == StatusType::SUCCESS);
+// Strengths team1:73 team3:119 team5:1485 team7:1816 team9:11384
 
-    delete obj;
+output_t<int> res10 = obj->knockout_winner(1, 9);
+cout << (res10.status() == StatusType::SUCCESS);
+
+cout << (res10.ans() == 9);
+
+delete obj;
 
     return 0;
 }

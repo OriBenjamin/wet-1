@@ -463,7 +463,6 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
     }
     try
     {
-        int start = 0;
         Node<int,Team>** allKnockoutTeamsArray = new Node<int,Team>*[knockoutTeams.getSize()];
         Node<int,Team>* firstTeam = knockoutTeams.getFirstNextNode(&minTeamId);
         int numOfKnockoutTeams = efficientTreeToPointersArray(allKnockoutTeamsArray, firstTeam, &maxTeamId);
@@ -476,7 +475,7 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
                 numOfKnockoutTeams++;
             }
         }*/
-        if(numOfKnockoutTeams == 0)
+        if(numOfKnockoutTeams <= 0)
         {
             return output_t<int>(StatusType::FAILURE);
         }
@@ -501,6 +500,10 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
     catch(std::bad_alloc& e)
     {
         return output_t<int>(StatusType::ALLOCATION_ERROR);
+    }
+    catch(NodeDoesNotExist& e)
+    {
+        return output_t<int>(StatusType::FAILURE);
     }
 }
 
