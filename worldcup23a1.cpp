@@ -13,14 +13,15 @@ world_cup_t::~world_cup_t()
 
 StatusType world_cup_t::add_team(int teamId, int points)
 {
-    try
-    {
-        Team *team = new Team(teamId, points);
-        teams.insert(&team->getTeamIdRef(),team);
-    }
-    catch(std::invalid_argument& e)
+    if(teamId <= 0 || points < 0)
     {
         return StatusType::INVALID_INPUT;
+    }
+    Team *team = nullptr;
+    try
+    {
+        team = new Team(teamId, points);
+        teams.insert(&team->getTeamIdRef(),team);
     }
     catch (std::bad_alloc& e)
     {
@@ -28,6 +29,7 @@ StatusType world_cup_t::add_team(int teamId, int points)
     }
     catch (NodeAlreadyExist&)
     {
+        delete team;
         return StatusType::FAILURE;
     }
     return StatusType::SUCCESS;
