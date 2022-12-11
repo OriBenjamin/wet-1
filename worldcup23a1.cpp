@@ -114,6 +114,7 @@ StatusType world_cup_t::remove_player(int playerId)
         }
         Player* player = playersById.remove(&playerId);
         playersByStatistics.remove(player);
+        player->setPlayerNodeInStats(nullptr);
         Team* team = player->getTeam();
         team->removePlayer(*player);
         if(playersByStatistics.getSize() == 0) topScorerPlayer = nullptr;
@@ -151,6 +152,8 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
         playersByStatistics.insert(player,player);
         player->getTeam()->insertPlayer(*player);
         topScorerPlayer =  playersByStatistics.getLastNodeValue();
+        Node<Player,Player>* playerNode = playersByStatistics.findNode(playersByStatistics.getRoot(), player);
+        player->setPlayerNodeInStats(playerNode);
     }
     catch (NodeDoesNotExist&)
     {
@@ -267,6 +270,7 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId) {
             team3->setCardSum(team1->getCardSum() + team2->getCardSum());
             team3->setGoalSum(team1->getGoalSum() + team2->getGoalSum());
             team3->setGoalKeepers(team1->getGoalKeepers() + team2->getGoalKeepers());
+            team3->setPoints(team1->getPoints() + team2->getPoints());
             team3->updatePlayersFields(team3);
             Team* team = teams.remove(&teamId1);
             if(knockoutTeams.exists(&teamId1)) knockoutTeams.remove(&teamId1);
@@ -408,7 +412,7 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
     {
         Team* team = teams.find(&teamId);
         Player* player = team->getPlayers()->find(&playerId);
-
+        if(!player->getPlayerNodeInStats()) return StatusType::FAILURE;
         Node<Player,Player>* next = player->getPlayerNodeInStats()->next;
         Node<Player,Player>* prev = player->getPlayerNodeInStats()->prev;
         if(!next && prev) return prev->value->getPlayerId();
@@ -599,5 +603,5 @@ void playKnockout(Pair<int,int>* finalKnockoutTeamArray, int numOfKnockoutTeams,
         }
     }
 */
-    playKnockout(finalKnockoutTeamArray, numOfKnockoutTeams, round+1,  (notEven) ? participants/2+1 : participants/2);
+    playKnockout(finalKnockoutTeamArray, numOfKnockoutTeams, round*2,  (notEven) ? participants/2+1 : participants/2);
 }

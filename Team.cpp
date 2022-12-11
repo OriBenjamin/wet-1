@@ -68,7 +68,6 @@ void Team::setPlayersByStatistics(const Tree<Player, Player> &playersByStatistic
 }
 
 
-
 void Team::updatePlayersFields(Team* thisTeam) //O(n)
 {
     Node<Player,Player>** nodeArray = new Node<Player,Player>*[this->getSize()];
@@ -78,7 +77,6 @@ void Team::updatePlayersFields(Team* thisTeam) //O(n)
     {
         nodeArray[i]->value->setGamesPlayed(nodeArray[i]->value->getPlayerGamesPlayed()+teamGamesPlayed);
         nodeArray[i]->value->setTeam(thisTeam);
-        nodeArray[i]->value->setPlayerNodeInStats(nodeArray[i]);
     }
     this->setTeamGamesPlayed(0);
     delete[] nodeArray;

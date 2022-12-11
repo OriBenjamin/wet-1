@@ -50,7 +50,7 @@ public:
     void setTeam(Team *team);
     void setPlayerNodeInStats(Node<Player, Player> *playerNodeInStats);
 };
-
+void updatePlayersFields(Tree<Player,Player>* statsTree);
 bool operator>(const Player& player1, const Player& player2);
 
 

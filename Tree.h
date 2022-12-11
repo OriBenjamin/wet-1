@@ -137,6 +137,7 @@ void Tree<Key,Value>::insert(Key* key, Value* value)
     }
     Node<Key, Value> *nodeForInsertion = new Node<Key, Value>(key, value);
     root = insertNode(root, nodeForInsertion);
+    balanceTree(nodeForInsertion);
     if(nodeForInsertion->next)
     {
         nodeForInsertion->next->prev = nodeForInsertion;
@@ -177,12 +178,12 @@ Node<Key,Value>* Tree<Key,Value>::insertNode(Node<Key,Value>* currentNode, Node<
         currentNode->right = insertNode(currentNode->right, nodeForInsertion);
         currentNode->right->parent = currentNode;
     }
-    updateHeight(currentNode);
-    int rightChildBalanceFactor = getBalanceFactor(currentNode->right);
+   // updateHeight(currentNode);
+   /* int rightChildBalanceFactor = getBalanceFactor(currentNode->right);
     int leftChildBalanceFactor = getBalanceFactor(currentNode->left);
     int balanceFactor = getBalanceFactor(currentNode);
-    return getRotated(currentNode, rightChildBalanceFactor, leftChildBalanceFactor, balanceFactor);
-    //return currentNode;
+    return getRotated(currentNode, rightChildBalanceFactor, leftChildBalanceFactor, balanceFactor);*/
+    return currentNode;
 }
 
 template<class Key, class Value>
@@ -198,7 +199,7 @@ template<class Key, class Value>
 Node<Key, Value> * Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, int rightChildBalanceFactor, int leftChildBalanceFactor,
                              int balanceFactor)
  {
-    if(balanceFactor == 2 && leftChildBalanceFactor > 0)
+    if(balanceFactor == 2 && leftChildBalanceFactor >= 0)
     {
         Node<Key,Value>* A = currentNode;
         Node<Key,Value>* Al = currentNode->left;
@@ -217,12 +218,12 @@ Node<Key, Value> * Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, i
                 Al->parent->left = Al;
             }
         }
-        updateHeight(A);
         updateHeight(Alr);
+        updateHeight(A);
         updateHeight(Al);
         return Al;
     }
-    else if(balanceFactor==2 && leftChildBalanceFactor==-1)
+     if(balanceFactor==2 && leftChildBalanceFactor==-1)
     {
         Node<Key,Value>* A = currentNode;
         Node<Key,Value>* Al = currentNode->left;
@@ -254,7 +255,7 @@ Node<Key, Value> * Tree<Key, Value>::getRotated(Node<Key, Value> *currentNode, i
         updateHeight(Alr);
         return Alr;
     }
-    else if(balanceFactor==-2 && rightChildBalanceFactor<0)
+    else if(balanceFactor==-2 && rightChildBalanceFactor<=0)
     {
         Node<Key,Value>* A = currentNode;
         Node<Key,Value>* Ar = currentNode->right;
