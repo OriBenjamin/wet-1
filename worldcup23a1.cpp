@@ -461,9 +461,10 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
     {
         return output_t<int>(StatusType::INVALID_INPUT);
     }
+    Node<int,Team>** allKnockoutTeamsArray = nullptr;
     try
     {
-        Node<int,Team>** allKnockoutTeamsArray = new Node<int,Team>*[knockoutTeams.getSize()];
+        allKnockoutTeamsArray = new Node<int,Team>*[knockoutTeams.getSize()];
         Node<int,Team>* firstTeam = knockoutTeams.getFirstNextNode(&minTeamId);
         int numOfKnockoutTeams = efficientTreeToPointersArray(allKnockoutTeamsArray, firstTeam, &maxTeamId);
         //int numOfKnockoutTeams = 0;
@@ -504,6 +505,7 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
     }
     catch(NodeDoesNotExist& e)
     {
+        delete[] allKnockoutTeamsArray;
         return output_t<int>(StatusType::FAILURE);
     }
 }
