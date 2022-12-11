@@ -251,8 +251,17 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId) {
             Team *team2 = teams.find(&teamId2);
             team2->updatePlayersGamePlayed();
             Team *team3 = new Team(newTeamId, team1->getPoints() + team1->getPoints());
-            team3->setPlayers(*mergeTrees(*team1->getPlayers(), *team2->getPlayers()));
-            team3->setPlayersByStatistics(*mergeTrees(*team1->getPlayersByStatistics(), *team2->getPlayersByStatistics()));
+
+            Tree<int,Player>* players = mergeTrees(*team1->getPlayers(), *team2->getPlayers());
+            team3->setPlayers(*players);
+            players->setRoot(nullptr);
+            delete players;
+
+            Tree<Player,Player>* playersByStats = mergeTrees(*team1->getPlayersByStatistics(), *team2->getPlayersByStatistics());
+            team3->setPlayersByStatistics(*playersByStats);
+            playersByStats->setRoot(nullptr);
+            delete playersByStats;
+
             team3->setTeamGamesPlayed(0); //update team games
             team3->setCardSum(team1->getCardSum() + team2->getCardSum());
             team3->setGoalSum(team1->getGoalSum() + team2->getGoalSum());
