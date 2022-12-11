@@ -71,7 +71,7 @@ class Tree
     Node<Key,Value>* findNode(Node<Key,Value>* currentNode, Key* key) const;
     bool exists(Key* key) const;
 
-    Node<Key,Value>* getFirstNode() const;
+    Node<Key,Value>* getFirstNextNode(Key* targetKey) const;
     Value* getLastNodeValue() const;
 
     int getBalanceFactor(const Node<Key,Value>* node) const;
@@ -565,18 +565,28 @@ Node<Key,Value>* Tree<Key,Value>::findNode(Node<Key,Value>* currentNode, Key* ke
 }
 
 template<class Key, class Value>
-Node<Key,Value>* Tree<Key,Value>::getFirstNode() const
+Node<Key,Value>* Tree<Key,Value>::getFirstNextNode(Key* targetKey) const
 {
+    Node<Key,Value>* returnNode = nullptr;
     Node<Key,Value>* currentNode = root;
     if(currentNode == nullptr)
     {
         throw NodeDoesNotExist(); //other error
     }
-    while(currentNode->left)
+    while(currentNode)
     {
-        currentNode = currentNode->left;
+        if(!(*currentNode->key < *targetKey))
+        {
+            if(returnNode == nullptr) returnNode = currentNode;
+            else returnNode = (*returnNode->key < *currentNode->key) ? returnNode : currentNode;
+            currentNode = currentNode->left;
+        }
+        else
+        {
+            currentNode = currentNode->right;
+        }
     }
-    return currentNode;
+    return returnNode;
 }
 
 template<class Key, class Value>
@@ -619,6 +629,23 @@ void convertTreeToPointersArray(Node<Key,Value>* currentNode, Node<Key,Value>** 
     nodesArray[currentNodeIndex] = currentNode;
     currentNodeIndex++;
     convertTreeToPointersArray(currentNode->right, nodesArray, currentNodeIndex);
+}
+
+template<class Key, class Value>
+int efficientTreeToPointersArray(Node<Key,Value>** nodesArray, Node<Key,Value>* firstNode, Key* lastKey)
+{
+    if(firstNode == NULL)
+    {
+        return -1;
+    }
+    int size = 0;
+    while(firstNode && !(*firstNode->key > *lastKey))
+    {
+        nodesArray[size] = firstNode;
+        firstNode = firstNode->next;
+        size++;
+    }
+    return size;
 }
 
 

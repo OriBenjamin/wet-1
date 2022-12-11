@@ -27,6 +27,8 @@ private:
     int cardsReceived;
     bool canBeGoalkeeper;
     Team* team;
+public:
+    void setTeam(Team *team);
 
 public:
     Player() = default;

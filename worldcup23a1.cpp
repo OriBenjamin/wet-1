@@ -247,9 +247,9 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId) {
 
     try {
             Team *team1 = teams.find(&teamId1);
-            team1->updatePlayersGamePlayed();
+            team1->updatePlayersFields(team1);
             Team *team2 = teams.find(&teamId2);
-            team2->updatePlayersGamePlayed();
+            team2->updatePlayersFields(team2);
             Team *team3 = new Team(newTeamId, team1->getPoints() + team1->getPoints());
 
             Tree<int,Player>* players = mergeTrees(*team1->getPlayers(), *team2->getPlayers());
@@ -266,11 +266,12 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId) {
             team3->setCardSum(team1->getCardSum() + team2->getCardSum());
             team3->setGoalSum(team1->getGoalSum() + team2->getGoalSum());
             team3->setGoalKeepers(team1->getGoalKeepers() + team2->getGoalKeepers());
+            team3->updatePlayersFields(team3);
             Team* team = teams.remove(&teamId1);
             if(knockoutTeams.exists(&teamId1)) knockoutTeams.remove(&teamId1);
             delete team;
             team = teams.remove(&teamId2);
-            if(knockoutTeams.exists(&teamId2)) knockoutTeams.remove(&teamId1);
+            if(knockoutTeams.exists(&teamId2)) knockoutTeams.remove(&teamId2);
             delete team;
             teams.insert(&team3->getTeamIdRef(), team3);
             if (team3->getSize() >= 11 && team3->getGoalKeepers() > 0) {
@@ -463,18 +464,18 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
     try
     {
         int start = 0;
-        int& index = start;
         Node<int,Team>** allKnockoutTeamsArray = new Node<int,Team>*[knockoutTeams.getSize()];
-        convertTreeToPointersArray(knockoutTeams.getRoot(), allKnockoutTeamsArray, index);
-        int numOfKnockoutTeams = 0;
-        for(int i=0; i<knockoutTeams.getSize(); i++)
+        Node<int,Team>* firstTeam = knockoutTeams.getFirstNextNode(&minTeamId);
+        int numOfKnockoutTeams = efficientTreeToPointersArray(allKnockoutTeamsArray, firstTeam, &maxTeamId);
+        //int numOfKnockoutTeams = 0;
+        /*for(int i=0; i<knockoutTeams.getSize(); i++)
         {
             int teamId = allKnockoutTeamsArray[i]->value->getTeamId();
             if(teamId>=minTeamId && teamId<=maxTeamId)
             {
                 numOfKnockoutTeams++;
             }
-        }
+        }*/
         if(numOfKnockoutTeams == 0)
         {
             return output_t<int>(StatusType::FAILURE);
@@ -482,35 +483,43 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
         Pair<int,int>* lastTeam = new Pair<int,int>(-1,-1);
         if(numOfKnockoutTeams % 2  != 0)
         {
-            lastTeam->getFirst() = allKnockoutTeamsArray[numOfKnockoutTeams-1]->value->getTeamId();
-            lastTeam->getSecond() = allKnockoutTeamsArray[numOfKnockoutTeams-1]->value->getPoints() +
+            lastTeam->setFirst(allKnockoutTeamsArray[numOfKnockoutTeams-1]->value->getTeamId());
+            lastTeam->setSecond(allKnockoutTeamsArray[numOfKnockoutTeams-1]->value->getPoints() +
                                     allKnockoutTeamsArray[numOfKnockoutTeams-1]->value->getGoalSum() -
-                                    allKnockoutTeamsArray[numOfKnockoutTeams-1]->value->getCardSum();
+                                    allKnockoutTeamsArray[numOfKnockoutTeams-1]->value->getCardSum());
             numOfKnockoutTeams--;
         }
-        Pair<int,int>* finalKnockoutTeamArray = new Pair<int,int>[2*numOfKnockoutTeams];
+        Pair<int,int>* finalKnockoutTeamArray = new Pair<int,int>[2*numOfKnockoutTeams + 1];
         for(int i=numOfKnockoutTeams; i<2*numOfKnockoutTeams; i++)
         {
-            finalKnockoutTeamArray[i].getFirst() = allKnockoutTeamsArray[i-numOfKnockoutTeams]->value->getTeamId();
-            finalKnockoutTeamArray[i].getSecond() = allKnockoutTeamsArray[i-numOfKnockoutTeams]->value->getPoints() +
+            finalKnockoutTeamArray[i].setFirst(allKnockoutTeamsArray[i-numOfKnockoutTeams]->value->getTeamId());
+            finalKnockoutTeamArray[i].setSecond(allKnockoutTeamsArray[i-numOfKnockoutTeams]->value->getPoints() +
                                                        allKnockoutTeamsArray[i-numOfKnockoutTeams]->value->getGoalSum() -
-                                                       allKnockoutTeamsArray[i-numOfKnockoutTeams]->value->getCardSum();
+                                                       allKnockoutTeamsArray[i-numOfKnockoutTeams]->value->getCardSum());
         }
         delete[] allKnockoutTeamsArray;
         playKnockout(finalKnockoutTeamArray, numOfKnockoutTeams);
+        if(numOfKnockoutTeams == 0) return lastTeam->getFirst();
+        if(numOfKnockoutTeams % 2 == 0)
+        {
+            int winner = finalKnockoutTeamArray[1].getFirst();
+            delete lastTeam;
+            delete[] finalKnockoutTeamArray;
+            return output_t<int>(winner);
+        }
         if(finalKnockoutTeamArray[1].getSecond() > lastTeam->getSecond())
         {
             int winner = finalKnockoutTeamArray[1].getFirst();
             delete lastTeam;
             delete[] finalKnockoutTeamArray;
-            return winner;
+            return output_t<int>(winner);
         }
         else if(finalKnockoutTeamArray[1].getSecond() < lastTeam->getSecond())
         {
             int winner = lastTeam->getFirst();
             delete lastTeam;
             delete[] finalKnockoutTeamArray;
-            return winner;
+            return output_t<int>(winner);
         }
         else
         {
@@ -519,14 +528,14 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
                 int winner = finalKnockoutTeamArray[1].getFirst();
                 delete lastTeam;
                 delete[] finalKnockoutTeamArray;
-                return winner;
+                return output_t<int>(winner);
             }
             else
             {
                 int winner = lastTeam->getFirst();
                 delete lastTeam;
                 delete[] finalKnockoutTeamArray;
-                return winner;
+                return output_t<int>(winner);
             }
         }
     }
@@ -539,7 +548,7 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
 
 void playKnockout(Pair<int,int>* finalKnockoutTeamArray, int numOfKnockoutTeams)
 {
-    if(numOfKnockoutTeams == 1)
+    if(numOfKnockoutTeams == 1 || numOfKnockoutTeams == 0)
     {
         return;
     }

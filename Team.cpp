@@ -82,14 +82,16 @@ void Team::setPlayersByStatistics(const Tree<Player, Player> &playersByStatistic
 
 
 
-void Team::updatePlayersGamePlayed() //O(n)
+void Team::updatePlayersFields(Team* thisTeam) //O(n)
 {
-    Node<int,Player>** nodeArray = new Node<int,Player>*[this->getSize()];
+    Node<Player,Player>** nodeArray = new Node<Player,Player>*[this->getSize()];
     int index = 0;
-    convertTreeToPointersArray(this->players.getRoot(), nodeArray,index);
+    convertTreeToPointersArray(this->playersByStatistics.getRoot(), nodeArray,index);
     for(int i=0; i<this->getSize(); i++)
     {
         nodeArray[i]->value->setGamesPlayed(nodeArray[i]->value->getPlayerGamesPlayed()+teamGamesPlayed);
+        nodeArray[i]->value->setTeam(thisTeam);
+        nodeArray[i]->value->setPlayerNodeInStats(nodeArray[i]);
     }
     this->setTeamGamesPlayed(0);
     delete[] nodeArray;

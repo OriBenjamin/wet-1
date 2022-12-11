@@ -90,6 +90,10 @@ void Player::setPlayerNodeInStats(Node<Player, Player> *playerNodeInStats) {
     Player::playerNodeInStats = playerNodeInStats;
 }
 
+void Player::setTeam(Team *team) {
+    Player::team = team;
+}
+
 
 
 /*

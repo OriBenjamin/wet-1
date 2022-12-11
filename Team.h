@@ -37,7 +37,7 @@ private:
     void insertPlayer(Player& player);
     void removePlayer(Player& player);
     void deleteTeamNodes(bool deleteValues);
-    void updatePlayersGamePlayed();
+    void updatePlayersFields(Team* team);
     //const getters
 
     int getTeamId() const {return teamId;}

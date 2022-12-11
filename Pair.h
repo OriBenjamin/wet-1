@@ -28,8 +28,8 @@ class Pair
     S& getSecond() {return second;}
 
     //setters
-    void setFirst(const T& first) const {this->first;}
-    void setSecond(const S& second) const {this->second;}
+    void setFirst(const T& first) {this->first = first;}
+    void setSecond(const S& second) {this->second = second;}
 
 };
 
