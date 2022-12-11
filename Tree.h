@@ -39,6 +39,7 @@ class Tree
     public:
     Tree():
     root(NULL), size(INITIAL_SIZE_OF_TREE) {}
+
     Tree(Node<Key,Value>* root, int size):
             root(root), size(size) {}
     Tree(const Tree<Key,Value>& tree) = default;
@@ -50,6 +51,11 @@ class Tree
     //const getters
     Node<Key, Value> *getRoot() const {return root;}
     int getSize() const {return size;}
+
+    //setters
+    void setRoot(Node<Key, Value> *root) {
+        Tree::root = root;
+    }
 
 
     //built-in functions
@@ -137,7 +143,7 @@ Key* Tree<Key,Value>::getClosestKey(Key* key) const
 template<class Key, class Value>
 Tree<Key,Value>::~Tree()
 {
-    deleteTree(true);
+    deleteTree(false);
 }
 
 template<class Key, class Value>
@@ -677,6 +683,7 @@ Tree<Key,Value> mergeTrees(Tree<Key,Value>& t1, Tree<Key,Value>& t2)
     delete[] t2_array;
     int start = 0, end = t1.getSize()+t2.getSize() -1;
     Node<Key,Value>* subRoot = sortArrayToTree(mergedArray, start, end,t1.getSize()+t2.getSize(),*mergedArray);
+
     Node<Key,Value>* *nodesArray = new Node<Key,Value>*[t1.getSize()+t2.getSize()];
     updateNextAndPrev(subRoot, t1.getSize()+t2.getSize(), nodesArray);
     delete[] nodesArray;
