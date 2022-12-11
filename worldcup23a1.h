@@ -69,6 +69,6 @@ class world_cup_t
     // } </DO-NOT-MODIFY>
 };
 
-void playKnockout(Pair<int,int>* finalKnockoutTeamArray, int numOfKnockoutTeams);
+void playKnockout(Pair<int,int>* finalKnockoutTeamArray, int numOfKnockoutTeams,int round, int participants);
 int absolute(int a);
 #endif // WORLDCUP23A1_H_

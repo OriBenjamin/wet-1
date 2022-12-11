@@ -161,7 +161,7 @@ int main() {
     cout << (res4.status() == StatusType::SUCCESS);
     cout << (res4.ans() == 7);
 
- /*   output_t<int> res5 = obj->knockout_winner(2, 8);
+    output_t<int> res5 = obj->knockout_winner(2, 8);
     cout << (res5.status() == StatusType::SUCCESS);
     cout << (res5.ans() == 7);
 
@@ -205,7 +205,7 @@ int main() {
     cout << (res10.status() == StatusType::SUCCESS);
 
     cout << (res10.ans() == 9);
-*/
+
     delete obj;
 
     return 0;
