@@ -477,6 +477,7 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
         }*/
         if(numOfKnockoutTeams <= 0)
         {
+            delete[] allKnockoutTeamsArray;
             return output_t<int>(StatusType::FAILURE);
         }
 
