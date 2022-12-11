@@ -397,7 +397,7 @@ Node<Key,Value>* Tree<Key,Value>::removeNode(Node<Key, Value> *currentNode, Key*
     {
         throw NodeDoesNotExist();
     }
-    Node<Key, Value>* removedNode;
+    //Node<Key, Value>* removedNode;
     if(*key == *currentNode->key)
     {
         if(currentNode->left && !currentNode->right)
@@ -482,7 +482,7 @@ Node<Key,Value>* Tree<Key,Value>::removeNode(Node<Key, Value> *currentNode, Key*
             root = rotatedTree;
         }
     }*/
-    return removedNode;
+    //return removedNode;
 }
 
 template<class Key, class Value>
